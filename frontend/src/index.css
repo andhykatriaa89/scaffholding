@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -6,7 +6,7 @@
 
 body {
     margin: 0;
-    font-family: 'Inter', sans-serif;
+    font-family: 'IBM Plex Sans', sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
 }
@@ -17,27 +17,27 @@ body {
 
 @layer base {
     :root {
-        --background: 60 9% 96%;            /* #F7F7F5 */
-        --foreground: 132 8% 13%;           /* #1F2420 */
+        --background: 240 5% 96%;           /* #F4F4F5 */
+        --foreground: 240 6% 4%;            /* #09090B */
         --card: 0 0% 100%;
-        --card-foreground: 132 8% 13%;
+        --card-foreground: 240 6% 4%;
         --popover: 0 0% 100%;
-        --popover-foreground: 132 8% 13%;
-        --primary: 23 78% 48%;              /* #D8621B */
+        --popover-foreground: 240 6% 4%;
+        --primary: 240 6% 10%;              /* #18181B */
         --primary-foreground: 0 0% 100%;
-        --secondary: 216 26% 24%;           /* #2E3B4E */
+        --secondary: 240 5% 26%;            /* #3F3F46 */
         --secondary-foreground: 0 0% 100%;
-        --muted: 60 6% 93%;
-        --muted-foreground: 132 5% 40%;
-        --accent: 24 60% 95%;
-        --accent-foreground: 23 78% 38%;
-        --destructive: 10 58% 44%;          /* #B3452F */
+        --muted: 240 5% 96%;
+        --muted-foreground: 240 4% 46%;
+        --accent: 45 93% 47%;               /* #EAB308 */
+        --accent-foreground: 26 83% 14%;
+        --destructive: 0 72% 51%;           /* #DC2626 */
         --destructive-foreground: 0 0% 100%;
-        --success: 137 26% 33%;             /* #3F6B4F */
-        --border: 60 5% 87%;
-        --input: 60 5% 84%;
-        --ring: 23 78% 48%;
-        --radius: 5px;
+        --success: 161 94% 24%;             /* #047857 */
+        --border: 240 6% 90%;
+        --input: 240 5% 84%;
+        --ring: 240 6% 10%;
+        --radius: 4px;
     }
 }
 
@@ -49,8 +49,8 @@ body {
         @apply bg-background text-foreground;
     }
     ::selection {
-        background: #D8621B;
-        color: #fff;
+        background: #EAB308;
+        color: #09090B;
     }
 }
 

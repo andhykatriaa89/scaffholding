@@ -9,11 +9,12 @@ Prototype UI/UX frontend-only (dummy/mock data, tanpa backend logic real) untuk 
 - Thumbnail barang: placeholder abu-abu dengan inisial kategori
 - Tidak perlu testing agent
 
-## Design Token (wajib diikuti)
-- BG #F7F7F5, teks #1F2420, aksen oranye industrial #D8621B, biru-abu #2E3B4E, hijau muted #3F6B4F, merah bata #B3452F
-- Font: Inter (UI) + IBM Plex Mono (semua angka: harga, tanggal, ID, stok) — class `.num`
-- Radius 4-6px, tanpa shadow besar/gradient
-- Sidebar kiri fixed ikon+label (220px), top bar tipis breadcrumb+search+profil
+## Design Token (iterasi 2 — re-theme "High-Contrast Technical", 14 Jun 2026)
+- BG #F4F4F5, surface putih, teks #09090B, sidebar hitam pekat #09090B, aksen amber industrial #EAB308, tombol primer hitam #09090B, sukses #047857, error #DC2626
+- Font: IBM Plex Sans (UI) + IBM Plex Mono (semua angka) — class `.num`
+- Radius 4px, tanpa shadow (pemisah 1px border), nav aktif: bg zinc-800 + indikator kiri amber
+- Login: split-screen 2 kolom (form putih kiri + foto scaffolding overlay gelap kanan)
+- Palet lama (oranye #D8621B dkk) diganti penuh atas permintaan user "pakai warna lain yang jangan terlihat seperti AI"
 
 ## Arsitektur
 - Frontend-only: React 19 + Tailwind + recharts + lucide-react + sonner. Backend FastAPI template ada tapi TIDAK dipakai (semua data mock di `/app/frontend/src/data/mock.js`).

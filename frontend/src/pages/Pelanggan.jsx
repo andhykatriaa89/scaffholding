@@ -48,40 +48,40 @@ export default function Pelanggan() {
     <div className="max-w-[1200px]">
       <div className="flex flex-wrap items-center gap-3 mb-4">
         <div className="relative w-[280px]">
-          <Search size={14} className="absolute left-2.5 top-1/2 -translate-y-1/2 text-[#1F2420]/35" />
+          <Search size={14} className="absolute left-2.5 top-1/2 -translate-y-1/2 text-[#18181B]/35" />
           <input
             data-testid="pelanggan-search"
             value={q}
             onChange={(e) => setQ(e.target.value)}
             placeholder="Cari nama, no HP, atau ID pelanggan…"
-            className="w-full h-8 pl-8 pr-3 text-[12px] bg-white border border-[#D6D6D1] rounded-[4px] outline-none focus:border-[#D8621B]"
+            className="w-full h-8 pl-8 pr-3 text-[12px] bg-white border border-[#D4D4D8] rounded-[4px] outline-none focus:border-[#18181B]"
           />
         </div>
         <select
           data-testid="pelanggan-filter-jenis"
           value={jenis}
           onChange={(e) => setJenis(e.target.value)}
-          className="h-8 px-2 text-[12px] bg-white border border-[#D6D6D1] rounded-[4px] outline-none"
+          className="h-8 px-2 text-[12px] bg-white border border-[#D4D4D8] rounded-[4px] outline-none"
         >
           <option>Semua</option>
           <option>Perusahaan</option>
           <option>Perorangan</option>
         </select>
-        <span className="text-[11px] text-[#1F2420]/50 num">{filtered.length} pelanggan</span>
+        <span className="text-[11px] text-[#18181B]/50 num">{filtered.length} pelanggan</span>
         <div className="flex-1" />
         <button
           data-testid="pelanggan-tambah-btn"
           onClick={openTambah}
-          className="h-8 px-3 inline-flex items-center gap-1.5 bg-[#D8621B] hover:bg-[#C2560F] text-white text-[12px] font-medium rounded-[4px] transition-colors"
+          className="h-8 px-3 inline-flex items-center gap-1.5 bg-[#09090B] hover:bg-[#27272A] text-white text-[12px] font-medium rounded-[4px] transition-colors"
         >
           <Plus size={14} /> Tambah Pelanggan
         </button>
       </div>
 
-      <div className="bg-white border border-[#E4E4E0] rounded-[6px] overflow-x-auto">
+      <div className="bg-white border border-[#E4E4E7] rounded-[6px] overflow-x-auto">
         <table className="w-full text-[12px]" data-testid="pelanggan-table">
           <thead>
-            <tr className="text-left text-[11px] text-[#1F2420]/50 border-b border-[#EEEEEA]">
+            <tr className="text-left text-[11px] text-[#18181B]/50 border-b border-[#EFEFF1]">
               <th className="px-4 py-2.5 font-medium">ID</th>
               <th className="px-2 py-2.5 font-medium">Nama</th>
               <th className="px-2 py-2.5 font-medium">Jenis</th>
@@ -94,19 +94,19 @@ export default function Pelanggan() {
           </thead>
           <tbody>
             {filtered.map((p) => (
-              <tr key={p.id} className="border-b border-[#F2F2EE] last:border-0 hover:bg-[#FAFAF8]">
-                <td className="px-4 py-2.5 num text-[11px] text-[#1F2420]/60">{p.id}</td>
+              <tr key={p.id} className="border-b border-[#F4F4F5] last:border-0 hover:bg-[#FAFAFA]">
+                <td className="px-4 py-2.5 num text-[11px] text-[#18181B]/60">{p.id}</td>
                 <td className="px-2 py-2.5 font-medium">{p.nama}</td>
                 <td className="px-2 py-2.5"><StatusBadge status={p.jenis} /></td>
                 <td className="px-2 py-2.5 num text-[11px]">{p.hp}</td>
-                <td className="px-2 py-2.5 text-[#1F2420]/60 max-w-[260px] truncate">{p.alamat}</td>
+                <td className="px-2 py-2.5 text-[#18181B]/60 max-w-[260px] truncate">{p.alamat}</td>
                 <td className="px-2 py-2.5 num text-right">{p.jumlahTransaksi}</td>
                 <td className="px-2 py-2.5 num text-[11px]">{p.terakhir}</td>
                 <td className="px-4 py-2.5 text-right">
                   <button
                     data-testid={`pelanggan-edit-${p.id}`}
                     onClick={() => openEdit(p)}
-                    className="p-1.5 rounded-[4px] text-[#1F2420]/45 hover:text-[#D8621B] hover:bg-[#D8621B]/5"
+                    className="p-1.5 rounded-[4px] text-[#18181B]/45 hover:text-[#92400E] hover:bg-[#FEF3C7]"
                   >
                     <Pencil size={13} />
                   </button>
@@ -114,7 +114,7 @@ export default function Pelanggan() {
               </tr>
             ))}
             {filtered.length === 0 && (
-              <tr><td colSpan={8} className="px-4 py-8 text-center text-[#1F2420]/45">Tidak ada pelanggan yang cocok dengan pencarian.</td></tr>
+              <tr><td colSpan={8} className="px-4 py-8 text-center text-[#18181B]/45">Tidak ada pelanggan yang cocok dengan pencarian.</td></tr>
             )}
           </tbody>
         </table>
@@ -125,13 +125,13 @@ export default function Pelanggan() {
           <div className="fixed inset-0 bg-black/25 z-40" onClick={() => setPanel(null)} />
           <div
             data-testid="pelanggan-slideover"
-            className="fixed inset-y-0 right-0 w-full max-w-[400px] bg-white z-50 border-l border-[#E4E4E0] flex flex-col shadow-[-8px_0_24px_rgba(0,0,0,0.06)]"
+            className="fixed inset-y-0 right-0 w-full max-w-[400px] bg-white z-50 border-l border-[#E4E4E7] flex flex-col shadow-[-8px_0_24px_rgba(0,0,0,0.06)]"
           >
-            <div className="flex items-center justify-between px-5 h-[52px] border-b border-[#EEEEEA]">
+            <div className="flex items-center justify-between px-5 h-[52px] border-b border-[#EFEFF1]">
               <div className="text-[13px] font-semibold">
                 {panel.mode === "tambah" ? "Tambah Pelanggan Baru" : `Edit — ${panel.id}`}
               </div>
-              <button data-testid="pelanggan-slideover-close" onClick={() => setPanel(null)} className="p-1.5 text-[#1F2420]/45 hover:text-[#1F2420]">
+              <button data-testid="pelanggan-slideover-close" onClick={() => setPanel(null)} className="p-1.5 text-[#18181B]/45 hover:text-[#18181B]">
                 <X size={16} />
               </button>
             </div>
@@ -143,7 +143,7 @@ export default function Pelanggan() {
                   value={panel.form.nama}
                   onChange={(e) => setF("nama", e.target.value)}
                   placeholder="cth: PT Karya Konstruksi Mandiri"
-                  className="w-full h-9 px-3 text-[13px] border border-[#D6D6D1] rounded-[4px] outline-none focus:border-[#D8621B]"
+                  className="w-full h-9 px-3 text-[13px] border border-[#D4D4D8] rounded-[4px] outline-none focus:border-[#18181B]"
                 />
               </div>
               <div>
@@ -157,8 +157,8 @@ export default function Pelanggan() {
                       onClick={() => setF("jenis", j)}
                       className={`h-8 px-3 text-[12px] rounded-[4px] border transition-colors ${
                         panel.form.jenis === j
-                          ? "border-[#D8621B] bg-[#D8621B]/8 text-[#B14E13] font-medium"
-                          : "border-[#D6D6D1] text-[#1F2420]/60 hover:border-[#1F2420]/30"
+                          ? "border-[#18181B] bg-[#F4F4F5] text-[#09090B] font-medium"
+                          : "border-[#D4D4D8] text-[#18181B]/60 hover:border-[#18181B]/30"
                       }`}
                     >
                       {j}
@@ -173,7 +173,7 @@ export default function Pelanggan() {
                   value={panel.form.hp}
                   onChange={(e) => setF("hp", e.target.value)}
                   placeholder="cth: 0812-3456-7890"
-                  className="w-full h-9 px-3 text-[13px] border border-[#D6D6D1] rounded-[4px] outline-none focus:border-[#D8621B] font-mono"
+                  className="w-full h-9 px-3 text-[13px] border border-[#D4D4D8] rounded-[4px] outline-none focus:border-[#18181B] font-mono"
                 />
               </div>
               <div>
@@ -184,19 +184,19 @@ export default function Pelanggan() {
                   onChange={(e) => setF("alamat", e.target.value)}
                   rows={3}
                   placeholder="Alamat lengkap untuk pengiriman dokumen &amp; penjemputan barang"
-                  className="w-full px-3 py-2 text-[13px] border border-[#D6D6D1] rounded-[4px] outline-none focus:border-[#D8621B] resize-none"
+                  className="w-full px-3 py-2 text-[13px] border border-[#D4D4D8] rounded-[4px] outline-none focus:border-[#18181B] resize-none"
                 />
               </div>
             </div>
-            <div className="px-5 py-4 border-t border-[#EEEEEA] flex gap-2">
+            <div className="px-5 py-4 border-t border-[#EFEFF1] flex gap-2">
               <button
                 data-testid="pelanggan-form-simpan"
                 onClick={simpan}
-                className="h-9 px-4 bg-[#D8621B] hover:bg-[#C2560F] text-white text-[13px] font-medium rounded-[4px] transition-colors"
+                className="h-9 px-4 bg-[#09090B] hover:bg-[#27272A] text-white text-[13px] font-medium rounded-[4px] transition-colors"
               >
                 {panel.mode === "tambah" ? "Simpan Pelanggan" : "Simpan Perubahan"}
               </button>
-              <button onClick={() => setPanel(null)} className="h-9 px-4 text-[13px] border border-[#D6D6D1] rounded-[4px] hover:bg-[#F7F7F5]">
+              <button onClick={() => setPanel(null)} className="h-9 px-4 text-[13px] border border-[#D4D4D8] rounded-[4px] hover:bg-[#F4F4F5]">
                 Batal
               </button>
             </div>

@@ -47,17 +47,17 @@ export default function Pengembalian() {
 
   return (
     <div className="max-w-[1100px] space-y-4">
-      <div className="bg-white border border-[#E4E4E0] rounded-[6px] p-5">
+      <div className="bg-white border border-[#E4E4E7] rounded-[6px] p-5">
         <div className="text-[13px] font-semibold mb-1">Cari Kontrak Sewa Aktif</div>
-        <div className="text-[11px] text-[#1F2420]/50 mb-3">Masukkan ID sewa atau nama pelanggan untuk memproses pengembalian barang.</div>
+        <div className="text-[11px] text-[#18181B]/50 mb-3">Masukkan ID sewa atau nama pelanggan untuk memproses pengembalian barang.</div>
         <div className="relative w-full max-w-[380px]">
-          <Search size={14} className="absolute left-2.5 top-1/2 -translate-y-1/2 text-[#1F2420]/35" />
+          <Search size={14} className="absolute left-2.5 top-1/2 -translate-y-1/2 text-[#18181B]/35" />
           <input
             data-testid="pengembalian-search"
             value={q}
             onChange={(e) => setQ(e.target.value)}
             placeholder="cth: SWA-1198 atau Mitra Konstruksi…"
-            className="w-full h-9 pl-8 pr-3 text-[13px] bg-white border border-[#D6D6D1] rounded-[4px] outline-none focus:border-[#D8621B]"
+            className="w-full h-9 pl-8 pr-3 text-[13px] bg-white border border-[#D4D4D8] rounded-[4px] outline-none focus:border-[#18181B]"
           />
         </div>
         <div className="mt-3 grid grid-cols-1 md:grid-cols-2 gap-2">
@@ -67,29 +67,29 @@ export default function Pengembalian() {
               data-testid={`pengembalian-pilih-${s.id}`}
               onClick={() => pilih(s)}
               className={`flex items-center justify-between px-3 py-2.5 border rounded-[4px] text-left transition-colors ${
-                sewa?.id === s.id ? "border-[#D8621B] bg-[#D8621B]/5" : "border-[#E4E4E0] hover:border-[#1F2420]/25"
+                sewa?.id === s.id ? "border-[#EAB308] bg-[#FFFBEB]" : "border-[#E4E4E7] hover:border-[#18181B]/25"
               }`}
             >
               <div>
                 <div className="text-[12px] font-medium">{s.pelanggan}</div>
-                <div className="num text-[10px] text-[#1F2420]/50">{s.id} · {s.tglMulai} → {s.tglSelesai}</div>
+                <div className="num text-[10px] text-[#18181B]/50">{s.id} · {s.tglMulai} → {s.tglSelesai}</div>
               </div>
               <StatusBadge status={s.status} />
             </button>
           ))}
-          {hasil.length === 0 && <p className="text-[12px] text-[#1F2420]/45 py-2">Tidak ada kontrak aktif yang cocok.</p>}
+          {hasil.length === 0 && <p className="text-[12px] text-[#18181B]/45 py-2">Tidak ada kontrak aktif yang cocok.</p>}
         </div>
       </div>
 
       {sewa && (
-        <div className="bg-white border border-[#E4E4E0] rounded-[6px] p-5 space-y-4" data-testid="pengembalian-detail">
+        <div className="bg-white border border-[#E4E4E7] rounded-[6px] p-5 space-y-4" data-testid="pengembalian-detail">
           <div className="flex items-start justify-between flex-wrap gap-2">
             <div>
               <div className="text-[13px] font-semibold">Checklist Kondisi — <span className="num">{sewa.id}</span></div>
-              <div className="text-[11px] text-[#1F2420]/50">
+              <div className="text-[11px] text-[#18181B]/50">
                 {sewa.pelanggan} · jatuh tempo <span className="num">{sewa.tglSelesai}</span>
                 {hariTelat > 0 && (
-                  <span className="text-[#B3452F] font-medium"> · telat {hariTelat} hari (denda keterlambatan = tarif harian × qty × {hariTelat})</span>
+                  <span className="text-[#DC2626] font-medium"> · telat {hariTelat} hari (denda keterlambatan = tarif harian × qty × {hariTelat})</span>
                 )}
               </div>
             </div>
@@ -100,11 +100,11 @@ export default function Pengembalian() {
             {sewa.items.map((it) => {
               const d = dendaItem(it);
               return (
-                <div key={it.itemId} className="border border-[#E4E4E0] rounded-[4px] p-3">
+                <div key={it.itemId} className="border border-[#E4E4E7] rounded-[4px] p-3">
                   <div className="flex items-center justify-between flex-wrap gap-2">
                     <div>
                       <span className="text-[13px] font-medium">{it.nama}</span>
-                      <span className="num text-[11px] text-[#1F2420]/50 ml-2">{it.itemId} · {it.qty} unit</span>
+                      <span className="num text-[11px] text-[#18181B]/50 ml-2">{it.itemId} · {it.qty} unit</span>
                     </div>
                     <div className="flex flex-wrap gap-3">
                       {KONDISI.map((k) => (
@@ -115,30 +115,30 @@ export default function Pengembalian() {
                             name={`kondisi-${it.itemId}`}
                             checked={kondisi[it.itemId] === k}
                             onChange={() => setKondisi({ ...kondisi, [it.itemId]: k })}
-                            className="accent-[#D8621B]"
+                            className="accent-[#18181B]"
                           />
-                          <span className={kondisi[it.itemId] === k ? "font-medium" : "text-[#1F2420]/60"}>{k}</span>
+                          <span className={kondisi[it.itemId] === k ? "font-medium" : "text-[#18181B]/60"}>{k}</span>
                         </label>
                       ))}
                     </div>
                   </div>
                   {(d.k !== "Baik" || d.dendaTelat > 0) && (
-                    <div className="mt-2 pt-2 border-t border-dashed border-[#E4E4E0] text-[12px] space-y-0.5" data-testid={`denda-${it.itemId}`}>
+                    <div className="mt-2 pt-2 border-t border-dashed border-[#E4E4E7] text-[12px] space-y-0.5" data-testid={`denda-${it.itemId}`}>
                       {d.dendaTelat > 0 && (
-                        <div className="flex justify-between text-[#1F2420]/70">
+                        <div className="flex justify-between text-[#18181B]/70">
                           <span>Denda keterlambatan ({hariTelat} hr × {fmtRp(it.hargaSewa)} × {it.qty} unit)</span>
-                          <span className="num text-[#B3452F]">{fmtRp(d.dendaTelat)}</span>
+                          <span className="num text-[#DC2626]">{fmtRp(d.dendaTelat)}</span>
                         </div>
                       )}
                       {d.dendaRusak > 0 && (
-                        <div className="flex justify-between text-[#1F2420]/70">
+                        <div className="flex justify-between text-[#18181B]/70">
                           <span>Denda {d.k.toLowerCase()} ({Math.round(DENDA_KERUSAKAN[d.k] * 100)}% harga jual × {it.qty} unit)</span>
-                          <span className="num text-[#B3452F]">{fmtRp(d.dendaRusak)}</span>
+                          <span className="num text-[#DC2626]">{fmtRp(d.dendaRusak)}</span>
                         </div>
                       )}
                       <div className="flex justify-between font-medium">
                         <span>Subtotal denda item</span>
-                        <span className="num text-[#B3452F]">{fmtRp(d.total)}</span>
+                        <span className="num text-[#DC2626]">{fmtRp(d.total)}</span>
                       </div>
                     </div>
                   )}
@@ -147,17 +147,17 @@ export default function Pengembalian() {
             })}
           </div>
 
-          <div className="flex items-center justify-between border-t border-[#EEEEEA] pt-3 flex-wrap gap-3">
+          <div className="flex items-center justify-between border-t border-[#EFEFF1] pt-3 flex-wrap gap-3">
             <div className="text-[13px]">
               Total denda pengembalian:{" "}
-              <span className={`num font-semibold ${totalDenda > 0 ? "text-[#B3452F]" : "text-[#3F6B4F]"}`} data-testid="pengembalian-total-denda">
+              <span className={`num font-semibold ${totalDenda > 0 ? "text-[#DC2626]" : "text-[#047857]"}`} data-testid="pengembalian-total-denda">
                 {fmtRp(totalDenda)}
               </span>
             </div>
             <button
               data-testid="pengembalian-proses-btn"
               onClick={proses}
-              className="h-9 px-4 bg-[#D8621B] hover:bg-[#C2560F] text-white text-[13px] font-medium rounded-[4px] transition-colors"
+              className="h-9 px-4 bg-[#09090B] hover:bg-[#27272A] text-white text-[13px] font-medium rounded-[4px] transition-colors"
             >
               Proses Pengembalian
             </button>

@@ -21,20 +21,20 @@ export default function Barang() {
     <div className="max-w-[1200px]">
       <div className="flex flex-wrap items-center gap-3 mb-4">
         <div className="relative w-[280px]">
-          <Search size={14} className="absolute left-2.5 top-1/2 -translate-y-1/2 text-[#1F2420]/35" />
+          <Search size={14} className="absolute left-2.5 top-1/2 -translate-y-1/2 text-[#18181B]/35" />
           <input
             data-testid="barang-search"
             value={q}
             onChange={(e) => setQ(e.target.value)}
             placeholder="Cari nama barang atau kode…"
-            className="w-full h-8 pl-8 pr-3 text-[12px] bg-white border border-[#D6D6D1] rounded-[4px] outline-none focus:border-[#D8621B]"
+            className="w-full h-8 pl-8 pr-3 text-[12px] bg-white border border-[#D4D4D8] rounded-[4px] outline-none focus:border-[#18181B]"
           />
         </div>
         <select
           data-testid="barang-filter-kategori"
           value={kat}
           onChange={(e) => setKat(e.target.value)}
-          className="h-8 px-2 text-[12px] bg-white border border-[#D6D6D1] rounded-[4px] outline-none"
+          className="h-8 px-2 text-[12px] bg-white border border-[#D4D4D8] rounded-[4px] outline-none"
         >
           <option>Semua</option>
           <option>Frame</option>
@@ -43,13 +43,13 @@ export default function Barang() {
           <option>Platform</option>
           <option>Aksesori</option>
         </select>
-        <span className="text-[11px] text-[#1F2420]/50 num">{filtered.length} jenis barang</span>
+        <span className="text-[11px] text-[#18181B]/50 num">{filtered.length} jenis barang</span>
       </div>
 
-      <div className="bg-white border border-[#E4E4E0] rounded-[6px] overflow-x-auto">
+      <div className="bg-white border border-[#E4E4E7] rounded-[6px] overflow-x-auto">
         <table className="w-full text-[12px]" data-testid="barang-table">
           <thead>
-            <tr className="text-left text-[11px] text-[#1F2420]/50 border-b border-[#EEEEEA]">
+            <tr className="text-left text-[11px] text-[#18181B]/50 border-b border-[#EFEFF1]">
               <th className="px-4 py-2.5 font-medium">Barang</th>
               <th className="px-2 py-2.5 font-medium">Kategori</th>
               <th className="px-2 py-2.5 font-medium text-right">Harga Jual</th>
@@ -65,40 +65,40 @@ export default function Barang() {
               const tersedia = stokTersedia(b);
               const menipis = tersedia < b.minStok;
               return (
-                <tr key={b.id} className="border-b border-[#F2F2EE] last:border-0 hover:bg-[#FAFAF8]">
+                <tr key={b.id} className="border-b border-[#F4F4F5] last:border-0 hover:bg-[#FAFAFA]">
                   <td className="px-4 py-2">
                     <div className="flex items-center gap-2.5">
-                      <div className="w-9 h-9 rounded-[4px] bg-[#ECECE8] border border-[#E0E0DB] flex items-center justify-center shrink-0">
-                        <span className="num text-[11px] font-semibold text-[#1F2420]/45">{KATEGORI_INISIAL[b.kategori]}</span>
+                      <div className="w-9 h-9 rounded-[4px] bg-[#F4F4F5] border border-[#E4E4E7] flex items-center justify-center shrink-0">
+                        <span className="num text-[11px] font-semibold text-[#18181B]/45">{KATEGORI_INISIAL[b.kategori]}</span>
                       </div>
                       <div className="leading-tight">
                         <div className="font-medium">{b.nama}</div>
-                        <div className="num text-[10px] text-[#1F2420]/45">{b.id}</div>
+                        <div className="num text-[10px] text-[#18181B]/45">{b.id}</div>
                       </div>
                     </div>
                   </td>
-                  <td className="px-2 py-2 text-[#1F2420]/70">{b.kategori}</td>
+                  <td className="px-2 py-2 text-[#18181B]/70">{b.kategori}</td>
                   <td className="px-2 py-2 num text-right">{fmtRp(b.hargaJual)}</td>
                   <td className="px-2 py-2 num text-right">{fmtRp(b.hargaSewa)}</td>
                   <td className="px-2 py-2 num text-right">{b.stokTotal}</td>
                   <td className="px-2 py-2 text-right">
-                    <span className={`num inline-flex items-center gap-1.5 justify-end ${menipis ? "text-[#B3452F] font-semibold" : ""}`}>
+                    <span className={`num inline-flex items-center gap-1.5 justify-end ${menipis ? "text-[#DC2626] font-semibold" : ""}`}>
                       {tersedia}
                       <StatusBadge status={menipis ? "Menipis" : "Cukup"} />
                     </span>
                   </td>
-                  <td className="px-2 py-2 num text-right text-[#2E3B4E]">{b.stokDisewa}</td>
+                  <td className="px-2 py-2 num text-right text-[#3F3F46]">{b.stokDisewa}</td>
                   <td className="px-4 py-2"><StatusBadge status={b.kondisi} /></td>
                 </tr>
               );
             })}
             {filtered.length === 0 && (
-              <tr><td colSpan={8} className="px-4 py-8 text-center text-[#1F2420]/45">Barang tidak ditemukan. Periksa ejaan atau ganti filter kategori.</td></tr>
+              <tr><td colSpan={8} className="px-4 py-8 text-center text-[#18181B]/45">Barang tidak ditemukan. Periksa ejaan atau ganti filter kategori.</td></tr>
             )}
           </tbody>
         </table>
       </div>
-      <p className="mt-2 text-[11px] text-[#1F2420]/45">
+      <p className="mt-2 text-[11px] text-[#18181B]/45">
         Tersedia = stok total − sedang disewa − ditandai rusak. Batas menipis mengikuti stok minimum tiap barang.
       </p>
     </div>

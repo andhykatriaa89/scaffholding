@@ -25,62 +25,75 @@ export default function Login({ onLogin }) {
   };
 
   return (
-    <div className="min-h-screen bg-[#F7F7F5] flex items-center justify-center px-4">
-      <div className="w-full max-w-[360px]">
-        <div className="flex items-center gap-2.5 mb-6">
-          <div className="w-9 h-9 rounded-[5px] bg-[#D8621B] flex items-center justify-center">
-            <Construction size={19} className="text-white" />
+    <div className="min-h-screen flex bg-white">
+      <div className="flex-1 flex items-center justify-center px-6">
+        <div className="w-full max-w-[360px]">
+          <div className="flex items-center gap-2.5 mb-8">
+            <div className="w-9 h-9 rounded-[4px] bg-[#EAB308] flex items-center justify-center">
+              <Construction size={19} className="text-[#09090B]" />
+            </div>
+            <div className="leading-tight">
+              <div className="text-[15px] font-semibold text-[#09090B] tracking-tight">PT Sucoot Scaform Indonesia</div>
+              <div className="text-[11px] text-[#52525B]">Sistem Informasi Penyewaan &amp; Penjualan Scaffolding</div>
+            </div>
           </div>
-          <div className="leading-tight">
-            <div className="text-[15px] font-semibold text-[#1F2420]">PT Sucoot Scaform Indonesia</div>
-            <div className="text-[11px] text-[#1F2420]/55">Sistem Informasi Penyewaan &amp; Penjualan Scaffolding</div>
+
+          <form onSubmit={submit} data-testid="login-form" className="space-y-4">
+            <div>
+              <label className="block text-[12px] font-medium mb-1.5 text-[#3F3F46]">Username</label>
+              <input
+                data-testid="login-username-input"
+                value={u}
+                onChange={(e) => setU(e.target.value)}
+                placeholder="admin atau staff"
+                className="w-full h-9 px-3 text-[13px] border border-[#D4D4D8] rounded-[4px] outline-none focus:border-[#18181B] focus:ring-1 focus:ring-[#18181B] bg-white"
+              />
+            </div>
+            <div>
+              <label className="block text-[12px] font-medium mb-1.5 text-[#3F3F46]">Password</label>
+              <input
+                data-testid="login-password-input"
+                type="password"
+                value={p}
+                onChange={(e) => setP(e.target.value)}
+                placeholder="••••••••"
+                className="w-full h-9 px-3 text-[13px] border border-[#D4D4D8] rounded-[4px] outline-none focus:border-[#18181B] focus:ring-1 focus:ring-[#18181B] bg-white font-mono"
+              />
+            </div>
+            {err && (
+              <p data-testid="login-error" className="text-[12px] text-[#DC2626] leading-snug">{err}</p>
+            )}
+            <button
+              data-testid="login-submit-btn"
+              type="submit"
+              className="w-full h-9 bg-[#09090B] hover:bg-[#27272A] text-white text-[13px] font-medium rounded-[4px] transition-colors"
+            >
+              Masuk
+            </button>
+            <div className="pt-3 border-t border-[#E4E4E7] text-[11px] text-[#71717A] leading-relaxed">
+              Akses internal untuk Admin &amp; Staff Gudang.<br />
+              <span className="font-mono">admin / admin123</span> · <span className="font-mono">staff / staff123</span>
+            </div>
+          </form>
+          <p className="mt-6 text-[10px] text-[#A1A1AA]">
+            Hubungi bagian IT jika lupa kata sandi — ext. 114
+          </p>
+        </div>
+      </div>
+      <div className="hidden lg:block w-[45%] relative">
+        <img
+          src="https://images.unsplash.com/photo-1713593930871-e21d7f9ef4a1?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjY2NjV8MHwxfHNlYXJjaHw0fHxjb25zdHJ1Y3Rpb24lMjBzY2FmZm9sZGluZyUyMHNpdGV8ZW58MHx8fHwxNzgzMTYzMTYyfDA&ixlib=rb-4.1.0&q=85"
+          alt="Scaffolding di lokasi proyek"
+          className="absolute inset-0 w-full h-full object-cover"
+        />
+        <div className="absolute inset-0 bg-[#09090B]/60" />
+        <div className="absolute bottom-8 left-8 right-8">
+          <div className="w-8 h-[3px] bg-[#EAB308] mb-3" />
+          <div className="text-[13px] font-medium text-white">Gudang Narogong — Bekasi</div>
+          <div className="text-[11px] text-white/60 mt-1 max-w-[380px] leading-relaxed">
+            Pencatatan penyewaan, penjualan, stok, dan pengembalian scaffolding dalam satu sistem internal.
           </div>
         </div>
-
-        <form
-          onSubmit={submit}
-          data-testid="login-form"
-          className="bg-white border border-[#E4E4E0] rounded-[6px] p-5 space-y-4"
-        >
-          <div>
-            <label className="block text-[12px] font-medium mb-1.5 text-[#1F2420]/80">Username</label>
-            <input
-              data-testid="login-username-input"
-              value={u}
-              onChange={(e) => setU(e.target.value)}
-              placeholder="admin atau staff"
-              className="w-full h-9 px-3 text-[13px] border border-[#D6D6D1] rounded-[4px] outline-none focus:border-[#D8621B] bg-white"
-            />
-          </div>
-          <div>
-            <label className="block text-[12px] font-medium mb-1.5 text-[#1F2420]/80">Password</label>
-            <input
-              data-testid="login-password-input"
-              type="password"
-              value={p}
-              onChange={(e) => setP(e.target.value)}
-              placeholder="••••••••"
-              className="w-full h-9 px-3 text-[13px] border border-[#D6D6D1] rounded-[4px] outline-none focus:border-[#D8621B] bg-white font-mono"
-            />
-          </div>
-          {err && (
-            <p data-testid="login-error" className="text-[12px] text-[#B3452F] leading-snug">{err}</p>
-          )}
-          <button
-            data-testid="login-submit-btn"
-            type="submit"
-            className="w-full h-9 bg-[#D8621B] hover:bg-[#C2560F] text-white text-[13px] font-medium rounded-[4px] transition-colors"
-          >
-            Masuk
-          </button>
-          <div className="pt-1 border-t border-[#EEEEEA] text-[11px] text-[#1F2420]/45 leading-relaxed">
-            Akses internal untuk Admin &amp; Staff Gudang.<br />
-            <span className="font-mono">admin / admin123</span> · <span className="font-mono">staff / staff123</span>
-          </div>
-        </form>
-        <p className="mt-4 text-[10px] text-[#1F2420]/35 text-center">
-          Hubungi bagian IT jika lupa kata sandi — ext. 114
-        </p>
       </div>
     </div>
   );
