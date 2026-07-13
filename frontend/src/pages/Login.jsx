@@ -1,26 +1,36 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Construction } from "lucide-react";
 
-const AKUN = {
-  admin: { pass: "admin123", nama: "Rina Kusuma", role: "Admin" },
-  staff: { pass: "staff123", nama: "Dedi Firmansyah", role: "Staff Gudang" },
-};
+import axios from "@/lib/axios";
+import LogoPT from "../PT.png";
 
 export default function Login({ onLogin }) {
   const [u, setU] = useState("");
   const [p, setP] = useState("");
   const [err, setErr] = useState("");
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
-  const submit = (e) => {
+  const submit = async (e) => {
     e.preventDefault();
-    const akun = AKUN[u.trim().toLowerCase()];
-    if (akun && akun.pass === p) {
-      onLogin({ nama: akun.nama, role: akun.role });
+    setLoading(true);
+    setErr("");
+    try {
+      await axios.get("/sanctum/csrf-cookie");
+      const res = await axios.post("/api/auth/login", {
+        username: u.trim().toLowerCase(),
+        password: p,
+      });
+      onLogin(res.data.user);
       navigate("/dashboard");
-    } else {
-      setErr("Username atau password salah. Coba: admin/admin123 atau staff/staff123");
+    } catch (error) {
+      if (error.response && error.response.status === 401) {
+        setErr("Username atau password salah.");
+      } else {
+        setErr("Terjadi kesalahan pada server.");
+      }
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -28,13 +38,11 @@ export default function Login({ onLogin }) {
     <div className="min-h-screen flex bg-white">
       <div className="flex-1 flex items-center justify-center px-6">
         <div className="w-full max-w-[360px]">
-          <div className="flex items-center gap-2.5 mb-8">
-            <div className="w-9 h-9 rounded-[4px] bg-[#EAB308] flex items-center justify-center">
-              <Construction size={19} className="text-[#09090B]" />
-            </div>
-            <div className="leading-tight">
-              <div className="text-[15px] font-semibold text-[#09090B] tracking-tight">PT Sucoot Scaform Indonesia</div>
-              <div className="text-[11px] text-[#52525B]">Sistem Informasi Penyewaan &amp; Penjualan Scaffolding</div>
+          <div className="flex flex-col items-start gap-4 mb-8">
+            <img src={LogoPT} alt="PT Logo" className="h-14 w-auto object-contain shrink-0" />
+            <div className="leading-relaxed">
+              <div className="text-[18px] font-bold text-[#09090B] tracking-tight">PT Sucoot Scaform Indonesia</div>
+              <div className="text-[13px] text-[#52525B]">Sistem Informasi Penyewaan &amp; Penjualan Scaffolding</div>
             </div>
           </div>
 
@@ -66,9 +74,10 @@ export default function Login({ onLogin }) {
             <button
               data-testid="login-submit-btn"
               type="submit"
-              className="w-full h-9 bg-[#09090B] hover:bg-[#27272A] text-white text-[13px] font-medium rounded-[4px] transition-colors"
+              disabled={loading}
+              className="w-full h-9 bg-[#09090B] hover:bg-[#27272A] disabled:opacity-50 text-white text-[13px] font-medium rounded-[4px] transition-colors"
             >
-              Masuk
+              {loading ? "Memproses..." : "Masuk"}
             </button>
             <div className="pt-3 border-t border-[#E4E4E7] text-[11px] text-[#71717A] leading-relaxed">
               Akses internal untuk Admin &amp; Staff Gudang.<br />

@@ -1,5 +1,6 @@
 import { useState } from "react";
 import "@/App.css";
+import axios from "@/lib/axios";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { Toaster } from "sonner";
 import AppLayout from "@/components/AppLayout";
@@ -22,7 +23,12 @@ function App() {
     localStorage.setItem("ssf_user", JSON.stringify(u));
     setUser(u);
   };
-  const logout = () => {
+  const logout = async () => {
+    try {
+      await axios.post("/api/auth/logout");
+    } catch (e) {
+      console.error(e);
+    }
     localStorage.removeItem("ssf_user");
     setUser(null);
   };

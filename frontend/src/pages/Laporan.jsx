@@ -1,10 +1,14 @@
 import { useMemo, useState } from "react";
-import { FileDown, FileSpreadsheet, ChevronLeft, ChevronRight } from "lucide-react";
+import { FileDown, ChevronLeft, ChevronRight, FileBarChart, Filter } from "lucide-react";
 import { toast } from "sonner";
-import { penjualan, penyewaan, barang, stokTersedia, fmtRp, totalTransaksi, hitungHari } from "@/data/mock";
+import useSWR from "swr";
+import axios from "@/lib/axios";
+import { jsPDF } from "jspdf";
+import autoTable from "jspdf-autotable";
+import { fmtRp } from "@/lib/utils";
 import { StatusBadge } from "@/components/StatusBadge";
 
-const PER_PAGE = 6;
+const PER_PAGE = 8;
 
 export default function Laporan() {
   const [jenis, setJenis] = useState("Penjualan");
@@ -12,148 +16,201 @@ export default function Laporan() {
   const [sampai, setSampai] = useState("2026-06-14");
   const [page, setPage] = useState(1);
 
-  const rows = useMemo(() => {
-    if (jenis === "Penjualan")
-      return penjualan
-        .filter((t) => t.tanggal >= dari && t.tanggal <= sampai)
-        .map((t) => ({
-          id: t.id, tanggal: t.tanggal, pelanggan: t.pelanggan,
-          detail: `${t.items.length} jenis · ${t.items.reduce((a, i) => a + i.qty, 0)} unit`,
-          nilai: totalTransaksi(t.items, "harga"), status: t.status, metode: t.metode,
-        }));
-    if (jenis === "Penyewaan")
-      return penyewaan
-        .filter((t) => t.tglMulai >= dari && t.tglMulai <= sampai)
-        .map((t) => ({
-          id: t.id, tanggal: t.tglMulai, pelanggan: t.pelanggan,
-          detail: `${t.items.length} jenis · s/d ${t.tglSelesai}`,
-          nilai: totalTransaksi(t.items, "hargaSewa") * hitungHari(t.tglMulai, t.tglSelesai),
-          status: t.status, metode: t.metode,
-        }));
-    return barang.map((b) => ({
-      id: b.id, tanggal: "—", pelanggan: b.nama,
-      detail: `Total ${b.stokTotal} · disewa ${b.stokDisewa} · tersedia ${stokTersedia(b)}`,
-      nilai: stokTersedia(b) * b.hargaJual,
-      status: stokTersedia(b) < b.minStok ? "Menipis" : "Cukup", metode: b.kategori,
-    }));
-  }, [jenis, dari, sampai]);
+  const endpoint = jenis === "Penjualan" ? "penjualan" : jenis === "Penyewaan" ? "penyewaan" : "stok";
+  const url = `/api/laporan/${endpoint}?dari=${dari}&sampai=${sampai}&page=${page}&per_page=${PER_PAGE}`;
+  const fetcher = u => axios.get(u).then(r => r.data);
+  const { data: response, isLoading } = useSWR(url, fetcher);
 
-  const totalPage = Math.max(1, Math.ceil(rows.length / PER_PAGE));
-  const shown = rows.slice((page - 1) * PER_PAGE, page * PER_PAGE);
-  const totalNilai = rows.reduce((s, r) => s + r.nilai, 0);
+  const shown = response?.data || [];
+  const totalPage = response?.last_page || 1;
+  const totalBaris = response?.total || 0;
+  
+  // backend already handles filtering and gives us paginated results.
+  // totalNilai just sums up the current page for display, or we could have backend send total sum.
+  // For now, let's keep it summing the current page or remove it.
+  const totalNilai = shown.reduce((s, r) => s + r.nilai, 0);
 
-  const exportFile = (fmt) =>
-    toast.success(`Laporan ${jenis.toLowerCase()} periode ${dari} s/d ${sampai} diekspor ke ${fmt}`);
+  const exportFile = async (fmt) => {
+    const loadingToast = toast.loading(`Mengekspor Laporan ke ${fmt}...`);
+    try {
+      const fetchUrl = `/api/laporan/${endpoint}?dari=${dari}&sampai=${sampai}&per_page=10000`;
+      const res = await axios.get(fetchUrl);
+      const allData = res.data.data;
+
+      if (!allData || allData.length === 0) {
+        toast.error("Tidak ada data untuk diekspor pada rentang tanggal ini.", { id: loadingToast });
+        return;
+      }
+
+      const reportTitle = `Laporan ${jenis}`;
+      const reportDate = `${dari} s/d ${sampai}`;
+
+      if (fmt === "PDF") {
+        const doc = new jsPDF();
+        doc.setFontSize(16);
+        doc.text("PT SUCOOT SCAFORM INDONESIA", 14, 15);
+        doc.setFontSize(12);
+        doc.text(reportTitle, 14, 23);
+        doc.setFontSize(10);
+        doc.setTextColor(100);
+        doc.text(`Periode: ${jenis === "Stok" ? "Real-time" : reportDate}`, 14, 29);
+
+        const tableColumn = jenis === "Stok" 
+          ? ["Kode", "Barang", "Kategori", "Detail Stok", "Nilai Tersedia", "Status"]
+          : ["ID Trans.", "Tanggal", "Pelanggan", "Metode", "Detail Transaksi", "Nilai (Rp)", "Status"];
+
+        const tableRows = [];
+
+        allData.forEach(r => {
+          if (jenis === "Stok") {
+            tableRows.push([r.id, r.pelanggan, r.metode, r.detail, fmtRp(r.nilai), r.status]);
+          } else {
+            tableRows.push([r.id, r.tanggal, r.pelanggan, r.metode, r.detail, fmtRp(r.nilai), r.status]);
+          }
+        });
+
+        doc.autoTable({
+          head: [tableColumn],
+          body: tableRows,
+          startY: 35,
+          theme: "grid",
+          styles: { fontSize: 8, cellPadding: 2 },
+          headStyles: { fillColor: [37, 99, 235] },
+        });
+
+        doc.save(`${jenis}_${dari}_to_${sampai}.pdf`);
+      }
+
+      toast.success(`Laporan ${jenis} berhasil diekspor ke PDF!`, { id: loadingToast });
+    } catch (err) {
+      toast.error(`Gagal mengekspor laporan ke PDF`, { id: loadingToast });
+    }
+  };
 
   const ganti = (v, setter) => { setter(v); setPage(1); };
 
   return (
-    <div className="max-w-[1200px]">
-      <div className="flex flex-wrap items-end gap-3 mb-4">
-        <div>
-          <label className="block text-[11px] font-medium mb-1 text-[#18181B]/60">Jenis laporan</label>
-          <select
-            data-testid="laporan-filter-jenis"
-            value={jenis}
-            onChange={(e) => ganti(e.target.value, setJenis)}
-            className="h-8 px-2 text-[12px] bg-white border border-[#D4D4D8] rounded-[4px] outline-none"
-          >
-            <option>Penjualan</option>
-            <option>Penyewaan</option>
-            <option>Stok</option>
-          </select>
-        </div>
-        <div>
-          <label className="block text-[11px] font-medium mb-1 text-[#18181B]/60">Dari tanggal</label>
-          <input
-            data-testid="laporan-filter-dari"
-            type="date" value={dari} onChange={(e) => ganti(e.target.value, setDari)}
-            className="h-8 px-2 text-[12px] num bg-white border border-[#D4D4D8] rounded-[4px] outline-none"
-          />
-        </div>
-        <div>
-          <label className="block text-[11px] font-medium mb-1 text-[#18181B]/60">Sampai tanggal</label>
-          <input
-            data-testid="laporan-filter-sampai"
-            type="date" value={sampai} onChange={(e) => ganti(e.target.value, setSampai)}
-            className="h-8 px-2 text-[12px] num bg-white border border-[#D4D4D8] rounded-[4px] outline-none"
-          />
-        </div>
-        <span className="text-[11px] text-[#18181B]/50 pb-1.5">
-          <span className="num">{rows.length}</span> baris · total nilai <span className="num font-medium text-[#18181B]">{fmtRp(totalNilai)}</span>
-        </span>
-      </div>
-
-      <div className="bg-white border border-[#E4E4E7] rounded-[6px] overflow-hidden">
-        <div className="flex items-center justify-between px-4 py-3 border-b border-[#EFEFF1]">
-          <div className="text-[13px] font-semibold">Laporan {jenis} {jenis !== "Stok" && <span className="text-[11px] font-normal text-[#18181B]/50 num">({dari} — {sampai})</span>}</div>
-          <div className="flex gap-2">
-            <button
-              data-testid="laporan-export-pdf"
-              onClick={() => exportFile("PDF")}
-              className="h-8 px-3 inline-flex items-center gap-1.5 text-[12px] border border-[#D4D4D8] rounded-[4px] hover:bg-[#F4F4F5] transition-colors"
-            >
-              <FileDown size={13} /> PDF
-            </button>
-            <button
-              data-testid="laporan-export-excel"
-              onClick={() => exportFile("Excel")}
-              className="h-8 px-3 inline-flex items-center gap-1.5 text-[12px] border border-[#D4D4D8] rounded-[4px] hover:bg-[#F4F4F5] transition-colors"
-            >
-              <FileSpreadsheet size={13} /> Excel
-            </button>
+    <div className="max-w-[1400px] space-y-6">
+      <div className="bg-white rounded-[12px] p-6 shadow-sm border border-slate-200/60">
+        
+        <div className="flex flex-wrap items-end justify-between gap-4 mb-6">
+          <div className="flex flex-wrap items-end gap-4">
+            <div>
+              <label className="block text-[12px] font-bold text-slate-700 mb-1.5 ml-1">Jenis Laporan</label>
+              <div className="relative">
+                <Filter size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
+                <select
+                  data-testid="laporan-filter-jenis"
+                  value={jenis}
+                  onChange={(e) => ganti(e.target.value, setJenis)}
+                  className="h-10 pl-9 pr-8 text-[13px] font-bold text-slate-700 bg-slate-50 border border-slate-200 rounded-lg outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100 cursor-pointer appearance-none transition-all"
+                >
+                  <option>Penjualan</option>
+                  <option>Penyewaan</option>
+                  <option>Stok</option>
+                </select>
+              </div>
+            </div>
+            
+            <div>
+              <label className="block text-[12px] font-bold text-slate-700 mb-1.5 ml-1">Dari Tanggal</label>
+              <input
+                data-testid="laporan-filter-dari"
+                type="date" value={dari} onChange={(e) => ganti(e.target.value, setDari)}
+                className="h-10 px-3 text-[13px] font-bold text-slate-700 bg-slate-50 border border-slate-200 rounded-lg outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100 transition-all"
+              />
+            </div>
+            
+            <div>
+              <label className="block text-[12px] font-bold text-slate-700 mb-1.5 ml-1">Sampai Tanggal</label>
+              <input
+                data-testid="laporan-filter-sampai"
+                type="date" value={sampai} onChange={(e) => ganti(e.target.value, setSampai)}
+                className="h-10 px-3 text-[13px] font-bold text-slate-700 bg-slate-50 border border-slate-200 rounded-lg outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100 transition-all"
+              />
+            </div>
+          </div>
+          
+          <div className="flex flex-col items-end">
+            <span className="text-[12px] font-bold text-slate-500 mb-1">Total {totalBaris} Baris Data</span>
+            <span className="text-[20px] font-black text-[#2563EB] bg-blue-50 px-4 py-1.5 rounded-lg border border-blue-100">{fmtRp(totalNilai)}</span>
           </div>
         </div>
-        <table className="w-full text-[12px]" data-testid="laporan-table">
-          <thead>
-            <tr className="text-left text-[11px] text-[#18181B]/50 border-b border-[#EFEFF1]">
-              <th className="px-4 py-2.5 font-medium">{jenis === "Stok" ? "Kode" : "ID Transaksi"}</th>
-              <th className="px-2 py-2.5 font-medium">Tanggal</th>
-              <th className="px-2 py-2.5 font-medium">{jenis === "Stok" ? "Barang" : "Pelanggan"}</th>
-              <th className="px-2 py-2.5 font-medium">Detail</th>
-              <th className="px-2 py-2.5 font-medium">{jenis === "Stok" ? "Kategori" : "Metode"}</th>
-              <th className="px-2 py-2.5 font-medium text-right">{jenis === "Stok" ? "Nilai Stok Tersedia" : "Nilai"}</th>
-              <th className="px-4 py-2.5 font-medium">Status</th>
-            </tr>
-          </thead>
-          <tbody>
-            {shown.map((r) => (
-              <tr key={r.id} className="border-b border-[#F4F4F5] last:border-0 hover:bg-[#FAFAFA]">
-                <td className="px-4 py-2.5 num text-[11px]">{r.id}</td>
-                <td className="px-2 py-2.5 num text-[11px]">{r.tanggal}</td>
-                <td className="px-2 py-2.5 font-medium">{r.pelanggan}</td>
-                <td className="px-2 py-2.5 text-[#18181B]/60">{r.detail}</td>
-                <td className="px-2 py-2.5 text-[#18181B]/70">{r.metode}</td>
-                <td className="px-2 py-2.5 num text-right">{fmtRp(r.nilai)}</td>
-                <td className="px-4 py-2.5"><StatusBadge status={r.status} /></td>
-              </tr>
-            ))}
-            {shown.length === 0 && (
-              <tr><td colSpan={7} className="px-4 py-8 text-center text-[#18181B]/45">Tidak ada data pada rentang tanggal tersebut.</td></tr>
-            )}
-          </tbody>
-        </table>
-        <div className="flex items-center justify-between px-4 py-2.5 border-t border-[#EFEFF1]">
-          <span className="text-[11px] text-[#18181B]/50 num">
-            Halaman {page} dari {totalPage}
-          </span>
-          <div className="flex gap-1">
-            <button
-              data-testid="laporan-prev-page"
-              disabled={page <= 1}
-              onClick={() => setPage(page - 1)}
-              className="p-1.5 border border-[#D4D4D8] rounded-[4px] disabled:opacity-35 hover:bg-[#F4F4F5]"
-            >
-              <ChevronLeft size={14} />
-            </button>
-            <button
-              data-testid="laporan-next-page"
-              disabled={page >= totalPage}
-              onClick={() => setPage(page + 1)}
-              className="p-1.5 border border-[#D4D4D8] rounded-[4px] disabled:opacity-35 hover:bg-[#F4F4F5]"
-            >
-              <ChevronRight size={14} />
-            </button>
+
+        <div className="border border-slate-200 rounded-[10px] overflow-hidden">
+          <div className="flex items-center justify-between px-5 py-4 border-b border-slate-200 bg-slate-50">
+            <div className="flex items-center gap-2 text-slate-800">
+              <FileBarChart size={18} className="text-[#2563EB]" strokeWidth={2.5} />
+              <h3 className="text-[15px] font-bold">Laporan {jenis} {jenis !== "Stok" && <span className="text-[13px] font-medium text-slate-500 ml-1">({dari} s/d {sampai})</span>}</h3>
+            </div>
+            
+            <div className="flex gap-2">
+              <button
+                data-testid="laporan-export-pdf"
+                onClick={() => exportFile("PDF")}
+                className="h-9 px-4 inline-flex items-center gap-2 text-[13px] font-bold text-slate-700 bg-white border border-slate-200 rounded-md hover:bg-slate-50 hover:text-red-600 transition-colors shadow-sm"
+              >
+                <FileDown size={16} /> Export PDF
+              </button>
+            </div>
+          </div>
+          
+          <div className="overflow-x-auto">
+            <table className="w-full text-left border-collapse" data-testid="laporan-table">
+              <thead>
+                <tr className="border-b border-slate-200 text-[13px] text-slate-500 bg-white">
+                  <th className="px-5 py-3.5 font-medium">{jenis === "Stok" ? "Kode" : "ID Transaksi"}</th>
+                  <th className="px-3 py-3.5 font-medium">Tanggal</th>
+                  <th className="px-3 py-3.5 font-medium">{jenis === "Stok" ? "Barang" : "Pelanggan"}</th>
+                  <th className="px-3 py-3.5 font-medium">Detail</th>
+                  <th className="px-3 py-3.5 font-medium">{jenis === "Stok" ? "Kategori" : "Metode"}</th>
+                  <th className="px-3 py-3.5 font-medium text-right">{jenis === "Stok" ? "Nilai Stok Tersedia" : "Nilai"}</th>
+                  <th className="px-5 py-3.5 font-medium text-right">Status</th>
+                </tr>
+              </thead>
+              <tbody className="text-[14px] font-medium text-slate-700 bg-white">
+                {isLoading ? (
+                  <tr><td colSpan={7} className="px-5 py-12 text-center text-slate-500 font-medium">Memuat data...</td></tr>
+                ) : shown.map((r) => (
+                  <tr key={r.id} className="border-b border-slate-100 last:border-0 hover:bg-slate-50/70 transition-colors">
+                    <td className="px-5 py-4 text-slate-500">{r.id}</td>
+                    <td className="px-3 py-4 text-slate-500">{r.tanggal}</td>
+                    <td className="px-3 py-4 font-bold text-slate-800">{r.pelanggan}</td>
+                    <td className="px-3 py-4 text-slate-500">{r.detail}</td>
+                    <td className="px-3 py-4 text-slate-500">{r.metode}</td>
+                    <td className="px-3 py-4 text-right font-bold">{fmtRp(r.nilai)}</td>
+                    <td className="px-5 py-4 text-right"><StatusBadge status={r.status} /></td>
+                  </tr>
+                ))}
+                {!isLoading && shown.length === 0 && (
+                  <tr><td colSpan={7} className="px-5 py-12 text-center text-slate-500 font-medium">Tidak ada data pada rentang tanggal tersebut.</td></tr>
+                )}
+              </tbody>
+            </table>
+          </div>
+          
+          <div className="flex items-center justify-between px-5 py-3 border-t border-slate-200 bg-slate-50">
+            <span className="text-[13px] font-bold text-slate-500">
+              Halaman {page} dari {totalPage}
+            </span>
+            <div className="flex gap-2">
+              <button
+                data-testid="laporan-prev-page"
+                disabled={page <= 1}
+                onClick={() => setPage(page - 1)}
+                className="p-2 border border-slate-200 bg-white rounded-md disabled:opacity-40 hover:bg-slate-100 transition-colors"
+              >
+                <ChevronLeft size={16} />
+              </button>
+              <button
+                data-testid="laporan-next-page"
+                disabled={page >= totalPage}
+                onClick={() => setPage(page + 1)}
+                className="p-2 border border-slate-200 bg-white rounded-md disabled:opacity-40 hover:bg-slate-100 transition-colors"
+              >
+                <ChevronRight size={16} />
+              </button>
+            </div>
           </div>
         </div>
       </div>

@@ -1,146 +1,224 @@
+import useSWR from "swr";
+import axios from "@/lib/axios";
+import { Link } from "react-router-dom";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from "recharts";
-import { AlertTriangle, ArrowRightLeft, CalendarClock } from "lucide-react";
-import { barang, stokTersedia, penyewaan, grafikBulanan, aktivitasTerbaru, hitungHari, HARI_INI } from "@/data/mock";
+import { Package, AlertTriangle, Receipt, CalendarClock, TrendingUp, ArrowUpRight, ArrowRightLeft } from "lucide-react";
 import { StatusBadge } from "@/components/StatusBadge";
 
-const Card = ({ children, className = "", testid }) => (
-  <div data-testid={testid} className={`bg-white border border-[#E4E4E7] rounded-[6px] ${className}`}>{children}</div>
-);
+const fetcher = (url) => axios.get(url).then((res) => res.data);
 
 export default function Dashboard() {
-  const stokMenipis = barang.filter((b) => stokTersedia(b) < b.minStok);
-  const jatuhTempo = penyewaan.filter(
-    (s) => s.status !== "Selesai" && hitungHari(HARI_INI, s.tglSelesai) <= 7
-  );
-  const telat = penyewaan.filter((s) => s.status === "Telat");
+  const { data: summary, error: errSummary, isLoading: loadSummary } = useSWR("/api/dashboard/summary", fetcher);
+  const { data: grafikBulanan, error: errChart, isLoading: loadChart } = useSWR("/api/dashboard/grafik-bulanan", fetcher);
+  const { data: aktivitasTerbaru, error: errActs, isLoading: loadActs } = useSWR("/api/dashboard/aktivitas-terbaru", fetcher);
+
+  if (loadSummary || loadChart || loadActs) {
+    return <div className="p-6 text-slate-500">Memuat data dashboard...</div>;
+  }
+
+  if (errSummary || errChart || errActs) {
+    return <div className="p-6 text-red-500">Gagal memuat data dashboard.</div>;
+  }
+
+  const { totalStokBarang, totalJenisBarang, stokMenipis, transaksiHariIni, jatuhTempo, telatCount } = summary;
 
   return (
-    <div className="space-y-4 max-w-[1200px]">
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-        <Card testid="card-stok-menipis" className="p-4">
-          <div className="flex items-center justify-between mb-2">
-            <span className="text-[12px] font-medium text-[#18181B]/60">Stok menipis</span>
-            <AlertTriangle size={15} className="text-[#DC2626]" />
+    <div className="space-y-6 max-w-[1400px]">
+      
+      {/* 4 Cards (Dynamic Data) */}
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+        <div className="bg-white rounded-[12px] p-6 shadow-sm border border-slate-200/60 flex items-start justify-between">
+          <div>
+            <div className="text-[13px] text-slate-500 font-medium mb-1">Total Stok Barang</div>
+            <div className="text-[32px] font-bold text-slate-800 tracking-tight mb-1">{totalStokBarang?.toLocaleString('id-ID') || 0}</div>
+            <div className="text-xs text-slate-400 font-medium">{totalJenisBarang} jenis barang</div>
           </div>
-          <div className="text-[22px] font-semibold num">{stokMenipis.length} <span className="text-[13px] font-normal text-[#18181B]/50">jenis barang</span></div>
-          <div className="mt-1.5 space-y-0.5">
-            {stokMenipis.slice(0, 2).map((b) => (
-              <div key={b.id} className="text-[11px] text-[#18181B]/60 flex justify-between">
-                <span className="truncate">{b.nama}</span>
-                <span className="num text-[#DC2626] font-medium ml-2">{stokTersedia(b)} unit</span>
+          <div className="w-12 h-12 rounded-xl bg-[#EFF6FF] text-[#2563EB] flex items-center justify-center">
+            <Package size={24} strokeWidth={1.5} />
+          </div>
+        </div>
+
+        <div className="bg-white rounded-[12px] p-6 shadow-sm border border-slate-200/60 flex items-start justify-between">
+          <div>
+            <div className="text-[13px] text-slate-500 font-medium mb-1">Stok Menipis</div>
+            <div className="text-[32px] font-bold text-slate-800 tracking-tight mb-1">{stokMenipis.length}</div>
+            <div className="text-xs text-slate-400 font-medium">Membutuhkan restok</div>
+          </div>
+          <div className="w-12 h-12 rounded-xl bg-[#FEF3C7] text-[#D97706] flex items-center justify-center">
+            <AlertTriangle size={24} strokeWidth={1.5} />
+          </div>
+        </div>
+
+        <div className="bg-white rounded-[12px] p-6 shadow-sm border border-slate-200/60 flex items-start justify-between">
+          <div>
+            <div className="text-[13px] text-slate-500 font-medium mb-1">Aktivitas Hari Ini</div>
+            <div className="text-[32px] font-bold text-slate-800 tracking-tight mb-1">{transaksiHariIni.total}</div>
+            <div className="text-xs text-slate-400 font-medium">Transaksi tercatat</div>
+          </div>
+          <div className="w-12 h-12 rounded-xl bg-[#D1FAE5] text-[#059669] flex items-center justify-center">
+            <ArrowRightLeft size={24} strokeWidth={1.5} />
+          </div>
+        </div>
+
+        <div className="bg-white rounded-[12px] p-6 shadow-sm border border-slate-200/60 flex items-start justify-between">
+          <div>
+            <div className="text-[13px] text-slate-500 font-medium mb-1">Sewa Jatuh Tempo</div>
+            <div className="text-[32px] font-bold text-slate-800 tracking-tight mb-1">{jatuhTempo.length}</div>
+            <div className="text-xs text-slate-400 font-medium">{telatCount} telah lewat tempo</div>
+          </div>
+          <div className="w-12 h-12 rounded-xl bg-[#FFEDD5] text-[#EA580C] flex items-center justify-center">
+            <CalendarClock size={24} strokeWidth={1.5} />
+          </div>
+        </div>
+      </div>
+
+      {/* Middle Grid */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        
+        {/* Chart (Dynamic Data) */}
+        <div className="bg-white rounded-[12px] p-7 shadow-sm border border-slate-200/60 lg:col-span-2">
+          <div className="flex items-center gap-2 mb-1">
+            <TrendingUp size={18} className="text-[#2563EB]" strokeWidth={2.5} />
+            <h2 className="text-[16px] font-bold text-slate-800">Penjualan vs Penyewaan</h2>
+          </div>
+          <div className="text-[13px] text-slate-400 font-medium mb-8">Volume transaksi dalam juta rupiah (2026)</div>
+          
+          <div className="h-[280px]">
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart data={grafikBulanan} barGap={6} margin={{ top: 0, right: 0, left: -20, bottom: 0 }}>
+                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#E2E8F0" />
+                <XAxis dataKey="bulan" axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: "#64748B" }} dy={10} />
+                <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: "#64748B" }} />
+                <Tooltip 
+                  cursor={{ fill: 'transparent' }} 
+                  contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)', fontSize: '13px' }}
+                  formatter={(v, n) => [`Rp ${v} jt`, n === "sewa" ? "Penyewaan" : "Penjualan"]} 
+                />
+                <Legend 
+                  iconType="square" 
+                  iconSize={10} 
+                  wrapperStyle={{ fontSize: '13px', paddingTop: '20px' }} 
+                  formatter={(v) => <span className="text-slate-600 font-medium">{v === "sewa" ? "Penyewaan" : "Penjualan"}</span>}
+                />
+                <Bar name="Penjualan" dataKey="jual" fill="#2563EB" radius={[4, 4, 0, 0]} barSize={36} />
+                <Bar name="Penyewaan" dataKey="sewa" fill="#EA580C" radius={[4, 4, 0, 0]} barSize={36} />
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
+        </div>
+
+        {/* Stok Menipis List (Dynamic Data) */}
+        <div className="bg-white rounded-[12px] p-7 shadow-sm border border-slate-200/60 flex flex-col">
+          <div className="flex items-center justify-between mb-8">
+            <div className="flex items-center gap-2">
+              <AlertTriangle size={18} className="text-[#D97706]" strokeWidth={2.5} />
+              <h2 className="text-[16px] font-bold text-slate-800">Stok Menipis</h2>
+            </div>
+            <Link to="/barang" className="text-[13px] text-[#2563EB] font-semibold flex items-center gap-1 hover:underline">
+              Lihat Semua <ArrowUpRight size={14} strokeWidth={2.5} />
+            </Link>
+          </div>
+          
+          <div className="flex-1 flex flex-col gap-6 overflow-y-auto pr-2" style={{ maxHeight: '280px' }}>
+            {stokMenipis.length === 0 ? (
+              <div className="text-sm text-slate-500 text-center py-10">Stok aman, tidak ada peringatan.</div>
+            ) : stokMenipis.map((item, idx) => (
+              <div key={item.id || idx} className="flex items-center gap-4">
+                <div className="w-[52px] h-[52px] rounded-[10px] bg-slate-100 flex items-center justify-center shrink-0 border border-slate-200">
+                  <Package size={22} className="text-slate-400" />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <div className="text-[14px] font-semibold text-slate-800 truncate mb-0.5">{item.nama}</div>
+                  <div className="text-[12px] font-medium text-slate-400">Kategori: {item.kategori}</div>
+                </div>
+                <div className="text-[14px] font-bold text-[#DC2626] shrink-0">
+                  {item.stokTersedia} unit
+                </div>
               </div>
             ))}
           </div>
-        </Card>
-        <Card testid="card-transaksi-hari-ini" className="p-4">
-          <div className="flex items-center justify-between mb-2">
-            <span className="text-[12px] font-medium text-[#18181B]/60">Transaksi hari ini (14 Jun)</span>
-            <ArrowRightLeft size={15} className="text-[#3F3F46]" />
-          </div>
-          <div className="text-[22px] font-semibold num">3 <span className="text-[13px] font-normal text-[#18181B]/50">transaksi</span></div>
-          <div className="mt-1.5 text-[11px] text-[#18181B]/60">
-            1 penyewaan keluar · 1 penjualan · 1 pengembalian
-          </div>
-        </Card>
-        <Card testid="card-jatuh-tempo" className="p-4">
-          <div className="flex items-center justify-between mb-2">
-            <span className="text-[12px] font-medium text-[#18181B]/60">Sewa jatuh tempo minggu ini</span>
-            <CalendarClock size={15} className="text-[#B45309]" />
-          </div>
-          <div className="text-[22px] font-semibold num">{jatuhTempo.length} <span className="text-[13px] font-normal text-[#18181B]/50">kontrak</span></div>
-          <div className="mt-1.5 text-[11px] text-[#18181B]/60">
-            {telat.length} di antaranya sudah lewat tempo
-          </div>
-        </Card>
+        </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-5 gap-4">
-        <Card testid="chart-sewa-vs-jual" className="p-4 lg:col-span-2">
-          <div className="mb-3">
-            <div className="text-[13px] font-semibold">Nilai transaksi per bulan</div>
-            <div className="text-[11px] text-[#18181B]/50">Sewa vs jual, dalam juta rupiah (2026)</div>
+      {/* Bottom Table: Sewa Jatuh Tempo (Dynamic Data) */}
+      <div className="bg-white rounded-[12px] p-7 shadow-sm border border-slate-200/60">
+        <div className="flex items-center justify-between mb-6">
+          <div className="flex items-center gap-2">
+            <CalendarClock size={18} className="text-[#EA580C]" strokeWidth={2.5} />
+            <h2 className="text-[16px] font-bold text-slate-800">Sewa Mendekati / Lewat Jatuh Tempo</h2>
           </div>
-          <ResponsiveContainer width="100%" height={220}>
-            <BarChart data={grafikBulanan} barGap={3}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#E4E4E7" vertical={false} />
-              <XAxis dataKey="bulan" tick={{ fontSize: 11, fontFamily: "IBM Plex Mono" }} axisLine={false} tickLine={false} />
-              <YAxis tick={{ fontSize: 11, fontFamily: "IBM Plex Mono" }} axisLine={false} tickLine={false} width={32} />
-              <Tooltip
-                formatter={(v, n) => [`Rp ${v} jt`, n === "sewa" ? "Penyewaan" : "Penjualan"]}
-                contentStyle={{ fontSize: 12, borderRadius: 4, border: "1px solid #E4E4E7" }}
-              />
-              <Legend
-                formatter={(v) => <span style={{ fontSize: 11 }}>{v === "sewa" ? "Penyewaan" : "Penjualan"}</span>}
-                iconSize={9}
-              />
-              <Bar dataKey="sewa" fill="#EAB308" radius={[2, 2, 0, 0]} />
-              <Bar dataKey="jual" fill="#18181B" radius={[2, 2, 0, 0]} />
-            </BarChart>
-          </ResponsiveContainer>
-        </Card>
+          <Link to="/penyewaan" className="text-[13px] text-[#2563EB] font-semibold flex items-center gap-1 hover:underline">
+            Kelola Transaksi <ArrowUpRight size={14} strokeWidth={2.5} />
+          </Link>
+        </div>
 
-        <Card testid="tabel-aktivitas" className="lg:col-span-3 overflow-hidden">
-          <div className="px-4 pt-4 pb-2">
-            <div className="text-[13px] font-semibold">Aktivitas terbaru</div>
-            <div className="text-[11px] text-[#18181B]/50">Pergerakan barang &amp; transaksi tercatat</div>
-          </div>
-          <table className="w-full text-[12px]">
+        <div className="overflow-x-auto">
+          <table className="w-full text-left border-collapse">
             <thead>
-              <tr className="text-left text-[11px] text-[#18181B]/50 border-b border-[#EFEFF1]">
-                <th className="px-4 py-2 font-medium">Waktu</th>
-                <th className="px-2 py-2 font-medium">Jenis</th>
-                <th className="px-2 py-2 font-medium">Ref</th>
-                <th className="px-2 py-2 font-medium">Keterangan</th>
-                <th className="px-4 py-2 font-medium">Oleh</th>
+              <tr className="border-b-2 border-slate-100 text-[13px] text-slate-500">
+                <th className="pb-3 px-2 font-medium">ID Sewa</th>
+                <th className="pb-3 px-2 font-medium">Pelanggan</th>
+                <th className="pb-3 px-2 font-medium">Tgl Mulai</th>
+                <th className="pb-3 px-2 font-medium">Estimasi Selesai</th>
+                <th className="pb-3 px-2 font-medium">Item Disewa</th>
+                <th className="pb-3 px-2 font-medium">Status</th>
               </tr>
             </thead>
-            <tbody>
-              {aktivitasTerbaru.map((a, i) => (
-                <tr key={i} className="border-b border-[#F4F4F5] last:border-0 hover:bg-[#FAFAFA]">
-                  <td className="px-4 py-2 num text-[11px] text-[#18181B]/60 whitespace-nowrap">{a.waktu}</td>
-                  <td className="px-2 py-2"><StatusBadge status={a.jenis === "Stok" ? "Perlu Pengecekan" : a.jenis === "Penyewaan" ? "Aktif" : a.jenis === "Penjualan" ? "Lunas" : "Selesai"} /></td>
-                  <td className="px-2 py-2 num text-[11px]">{a.ref}</td>
-                  <td className="px-2 py-2 text-[#18181B]/80 max-w-[300px]">{a.keterangan}</td>
-                  <td className="px-4 py-2 text-[#18181B]/60 whitespace-nowrap">{a.oleh}</td>
+            <tbody className="text-[14px] text-slate-700 font-medium">
+              {jatuhTempo.map((s) => (
+                <tr key={s.id} className="border-b border-slate-100 last:border-0 hover:bg-slate-50/70 transition-colors">
+                  <td className="py-4 px-2 text-slate-500">{s.id}</td>
+                  <td className="py-4 px-2">{s.pelanggan}</td>
+                  <td className="py-4 px-2 text-slate-500">{s.tglMulai}</td>
+                  <td className="py-4 px-2 text-slate-500">{s.tglSelesai}</td>
+                  <td className="py-4 px-2">{s.items.length} jenis ({s.items.reduce((a, i) => a + i.qty, 0)} unit)</td>
+                  <td className="py-4 px-2">
+                    <StatusBadge status={s.status} />
+                  </td>
                 </tr>
               ))}
             </tbody>
           </table>
-        </Card>
+        </div>
       </div>
 
-      <Card testid="tabel-jatuh-tempo" className="overflow-hidden">
-        <div className="px-4 pt-4 pb-2 flex items-baseline justify-between">
-          <div>
-            <div className="text-[13px] font-semibold">Sewa mendekati / lewat jatuh tempo</div>
-            <div className="text-[11px] text-[#18181B]/50">Perlu konfirmasi perpanjangan atau penjadwalan pengembalian</div>
+      {/* Bottom Table: Aktivitas Terbaru (Dynamic Data) */}
+      <div className="bg-white rounded-[12px] p-7 shadow-sm border border-slate-200/60">
+        <div className="flex items-center justify-between mb-6">
+          <div className="flex items-center gap-2">
+            <Receipt size={18} className="text-[#059669]" strokeWidth={2.5} />
+            <h2 className="text-[16px] font-bold text-slate-800">Aktivitas Terbaru</h2>
           </div>
         </div>
-        <table className="w-full text-[12px]">
-          <thead>
-            <tr className="text-left text-[11px] text-[#18181B]/50 border-b border-[#EFEFF1]">
-              <th className="px-4 py-2 font-medium">ID Sewa</th>
-              <th className="px-2 py-2 font-medium">Pelanggan</th>
-              <th className="px-2 py-2 font-medium">Mulai</th>
-              <th className="px-2 py-2 font-medium">Estimasi Selesai</th>
-              <th className="px-2 py-2 font-medium">Item</th>
-              <th className="px-4 py-2 font-medium">Status</th>
-            </tr>
-          </thead>
-          <tbody>
-            {[...telat, ...jatuhTempo.filter((s) => s.status !== "Telat")].map((s) => (
-              <tr key={s.id} className="border-b border-[#F4F4F5] last:border-0 hover:bg-[#FAFAFA]">
-                <td className="px-4 py-2 num">{s.id}</td>
-                <td className="px-2 py-2">{s.pelanggan}</td>
-                <td className="px-2 py-2 num text-[11px]">{s.tglMulai}</td>
-                <td className="px-2 py-2 num text-[11px]">{s.tglSelesai}</td>
-                <td className="px-2 py-2 text-[#18181B]/60">{s.items.length} jenis · <span className="num">{s.items.reduce((a, i) => a + i.qty, 0)}</span> unit</td>
-                <td className="px-4 py-2"><StatusBadge status={s.status} /></td>
+
+        <div className="overflow-x-auto">
+          <table className="w-full text-left border-collapse">
+            <thead>
+              <tr className="border-b-2 border-slate-100 text-[13px] text-slate-500">
+                <th className="pb-3 px-2 font-medium">Waktu</th>
+                <th className="pb-3 px-2 font-medium">Jenis</th>
+                <th className="pb-3 px-2 font-medium">Referensi</th>
+                <th className="pb-3 px-2 font-medium">Keterangan</th>
+                <th className="pb-3 px-2 font-medium">Oleh</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
-      </Card>
+            </thead>
+            <tbody className="text-[14px] text-slate-700 font-medium">
+              {aktivitasTerbaru.map((a, i) => (
+                <tr key={i} className="border-b border-slate-100 last:border-0 hover:bg-slate-50/70 transition-colors">
+                  <td className="py-4 px-2 text-slate-500 whitespace-nowrap">{a.waktu}</td>
+                  <td className="py-4 px-2">
+                    <StatusBadge status={a.jenis === "Stok" ? "Perlu Pengecekan" : a.jenis === "Penyewaan" ? "Aktif" : a.jenis === "Penjualan" ? "Lunas" : "Selesai"} />
+                  </td>
+                  <td className="py-4 px-2 text-slate-500">{a.ref}</td>
+                  <td className="py-4 px-2 truncate max-w-[300px]">{a.keterangan}</td>
+                  <td className="py-4 px-2 text-slate-500">{a.oleh}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+
     </div>
   );
 }

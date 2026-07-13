@@ -3,6 +3,7 @@ import {
   LayoutGrid, Users, Package, ShoppingCart, CalendarClock,
   Undo2, FileBarChart, Search, LogOut, ChevronRight, Construction,
 } from "lucide-react";
+import LogoPT from "../PT.png";
 
 const NAV = [
   { to: "/dashboard", label: "Dashboard", icon: LayoutGrid },
@@ -33,45 +34,48 @@ export default function AppLayout({ user, onLogout, children }) {
     <div className="flex min-h-screen bg-[#F4F4F5]">
       <aside
         data-testid="sidebar"
-        className="fixed inset-y-0 left-0 w-[220px] bg-[#09090B] text-[#A1A1AA] flex flex-col z-30"
+        className="fixed inset-y-0 left-0 w-[240px] bg-white shadow-[1px_0_10px_rgba(0,0,0,0.03)] flex flex-col z-30 border-r border-slate-200"
       >
-        <div className="flex items-center gap-2.5 px-4 h-[52px] border-b border-white/10">
-          <div className="w-7 h-7 rounded-[4px] bg-[#EAB308] flex items-center justify-center shrink-0">
-            <Construction size={16} className="text-[#09090B]" />
-          </div>
-          <div className="leading-tight">
-            <div className="text-[13px] font-semibold tracking-tight text-white">Sucoot Scaform</div>
-            <div className="text-[10px] text-white/40">Sistem Penyewaan &amp; Penjualan</div>
-          </div>
+        <div className="flex items-center justify-center px-6 h-[70px] border-b border-slate-100">
+          <img src={LogoPT} alt="PT Logo" className="h-9 w-auto object-contain shrink-0" />
         </div>
-        <nav className="flex-1 py-3 px-2 space-y-0.5">
+        <nav className="flex-1 py-6 px-4 space-y-1 overflow-y-auto">
           {NAV.map(({ to, label, icon: Icon }) => (
             <NavLink
               key={to}
               to={to}
               data-testid={`nav-${to.slice(1)}`}
               className={({ isActive }) =>
-                `flex items-center gap-2.5 px-2.5 py-[7px] rounded-[4px] text-[13px] transition-colors border-l-2 ${
+                `flex items-center gap-3 px-3 py-2.5 rounded-lg text-[13.5px] font-medium transition-colors ${
                   isActive
-                    ? "bg-[#27272A] text-white font-medium border-[#EAB308]"
-                    : "text-white/55 hover:text-white hover:bg-white/5 border-transparent"
+                    ? "bg-blue-50 text-blue-700"
+                    : "text-slate-600 hover:bg-slate-50 hover:text-slate-900"
                 }`
               }
             >
-              <Icon size={15} strokeWidth={1.8} />
-              {label}
+              {({ isActive }) => (
+                <>
+                  <Icon size={18} strokeWidth={isActive ? 2.5 : 2} className={isActive ? "text-blue-600" : "text-slate-400"} />
+                  {label}
+                </>
+              )}
             </NavLink>
           ))}
         </nav>
-        <div className="px-4 py-3 border-t border-white/10 text-[10px] text-white/35 leading-relaxed">
-          Gudang Narogong — Bekasi<br />v1.0 · internal
+        <div className="p-4 border-t border-slate-100 bg-slate-50/50">
+          <div className="bg-white rounded-lg p-3 border border-slate-200 flex items-center gap-3 shadow-sm">
+             <div className="w-2 h-2 rounded-full bg-emerald-500 shrink-0" />
+             <div className="text-[11.5px] text-slate-700 font-medium leading-tight">
+               Gudang Narogong<br /><span className="text-slate-500 text-[10.5px] font-normal">v1.0 · Sistem Internal</span>
+             </div>
+          </div>
         </div>
       </aside>
 
-      <div className="flex-1 ml-[220px] flex flex-col min-w-0">
+      <div className="flex-1 ml-[240px] flex flex-col min-w-0">
         <header
           data-testid="topbar"
-          className="sticky top-0 z-20 h-[52px] bg-white border-b border-[#E4E4E7] flex items-center gap-4 px-5"
+          className="sticky top-0 z-20 h-[70px] bg-white/80 backdrop-blur-md border-b border-[#E4E4E7] flex items-center gap-4 px-6 shadow-sm"
         >
           <div className="flex items-center gap-1.5 text-[12px] text-[#18181B]/55 min-w-0">
             {crumb.split(" / ").map((part, i, arr) => (
