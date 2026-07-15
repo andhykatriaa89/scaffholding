@@ -79,10 +79,6 @@ export default function Login({ onLogin }) {
             >
               {loading ? "Memproses..." : "Masuk"}
             </button>
-            <div className="pt-3 border-t border-[#E4E4E7] text-[11px] text-[#71717A] leading-relaxed">
-              Akses internal untuk Admin &amp; Staff Gudang.<br />
-              <span className="font-mono">admin / admin123</span> · <span className="font-mono">staff / staff123</span>
-            </div>
           </form>
           <p className="mt-6 text-[10px] text-[#A1A1AA]">
             Hubungi bagian IT jika lupa kata sandi — ext. 114
@@ -98,7 +94,7 @@ export default function Login({ onLogin }) {
         <div className="absolute inset-0 bg-[#09090B]/60" />
         <div className="absolute bottom-8 left-8 right-8">
           <div className="w-8 h-[3px] bg-[#EAB308] mb-3" />
-          <div className="text-[13px] font-medium text-white">Gudang Narogong — Bekasi</div>
+          <div className="text-[13px] font-medium text-white">Gerbang Biru, Jl. Marunda Makmur No.86, Sagara Makmur, Tarumajaya, Bekasi Regency, West Java 17211</div>
           <div className="text-[11px] text-white/60 mt-1 max-w-[380px] leading-relaxed">
             Pencatatan penyewaan, penjualan, stok, dan pengembalian scaffolding dalam satu sistem internal.
           </div>

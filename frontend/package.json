@@ -68,7 +68,7 @@
   },
   "scripts": {
     "start": "craco start",
-    "build": "craco build",
+    "build": "craco build && rm -rf ../public/app && cp -R build ../public/app",
     "test": "craco test"
   },
   "browserslist": {
