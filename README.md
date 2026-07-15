@@ -1,78 +1,111 @@
 # 🏗️ Sistem Informasi Penyewaan & Penjualan Scaffolding
 
-**PT Sucoot Scaform Indonesia** — Gudang Narogong, Bekasi
+Sistem ini adalah aplikasi internal yang dikembangkan untuk manajemen operasional penyewaan dan penjualan scaffolding di **PT Sucoot Scaform Indonesia**.
 
-## Tech Stack
+📍 **Lokasi Gudang:** Gerbang Biru, Jl. Marunda Makmur No.86, Sagara Makmur, Tarumajaya, Bekasi Regency, West Java 17211
 
-- **Backend:** Laravel 13 (PHP 8.5) + MySQL + Sanctum
+## 🌟 Fitur Utama
+
+- **Dashboard & KPI:** Ringkasan statistik data penyewaan, penjualan, dan metrik bisnis.
+- **Manajemen Barang & Stok:** Pencatatan ketersediaan stok scaffolding secara real-time.
+- **Manajemen Pelanggan:** Database pelanggan (penyewa maupun pembeli).
+- **Transaksi Penyewaan:** Pembuatan kontrak penyewaan scaffolding.
+- **Transaksi Penjualan:** Pencatatan transaksi penjualan scaffolding.
+- **Pengembalian Barang:** Proses pencatatan pengembalian scaffolding dari penyewa.
+- **Laporan (Reporting):** Laporan mendetail untuk riwayat penjualan, penyewaan, dan pergerakan stok.
+
+## 🛠️ Teknologi yang Digunakan (Tech Stack)
+
+- **Backend:** Laravel (PHP) + MySQL + Laravel Sanctum (untuk autentikasi)
 - **Frontend:** React 19 + TailwindCSS 3 + Radix UI + Recharts
-- **Architecture:** SPA (React) served by Laravel, API under `/api/*`
+- **Arsitektur:** Aplikasi Single Page Application (SPA) React yang hasil build-nya disajikan langsung (served) oleh server backend Laravel.
 
-## Quick Setup
+---
+
+## 🚀 Cara Instalasi
+
+Berikut adalah langkah-langkah untuk menjalankan aplikasi ini secara lokal. Pastikan komputer Anda telah terinstal **PHP**, **Composer**, **Node.js (npm)**, dan **MySQL**.
+
+### 1. Setup Backend (Laravel)
+
+1. **Install dependensi PHP:**
+   ```bash
+   composer install
+   ```
+2. **Konfigurasi Environment:**
+   Duplikat file `.env.example` menjadi `.env`.
+   ```bash
+   cp .env.example .env
+   ```
+   Buka file `.env` dan atur konfigurasi koneksi database MySQL Anda:
+   ```env
+   DB_CONNECTION=mysql
+   DB_HOST=127.0.0.1
+   DB_PORT=3306
+   DB_DATABASE=nama_database_anda
+   DB_USERNAME=root
+   DB_PASSWORD=
+   ```
+3. **Generate Application Key:**
+   ```bash
+   php artisan key:generate
+   ```
+4. **Migrasi dan Seeding Database:**
+   Perintah ini akan membuat struktur tabel di database dan mengisi data awal (dummy).
+   ```bash
+   php artisan migrate --seed
+   ```
+
+### 2. Setup Frontend (React)
+
+1. **Masuk ke direktori frontend dan install dependensi npm:**
+   ```bash
+   cd frontend
+   npm install
+   ```
+2. **Build frontend:**
+   ```bash
+   npm run build
+   ```
+   _(Catatan: Script build ini telah dikonfigurasi untuk secara otomatis meng-compile React dan menyalin hasilnya ke folder `public/app/` pada Laravel)._
+
+### 3. Menjalankan Aplikasi
+
+1. **Kembali ke folder utama project (root directory):**
+   ```bash
+   cd ..
+   ```
+2. **Jalankan local development server Laravel:**
+   ```bash
+   php artisan serve
+   ```
+3. **Buka Aplikasi di Browser:**
+   Kunjungi URL berikut:
+   👉 **http://localhost:8000/login**
+
+### 🔑 Kredensial Login Default (Hasil Seeder)
+
+- **Admin:** Username: `admin` | Password: `admin123` (atau sesuai konfigurasi seeder Anda)
+- **Staff:** Username: `staff` | Password: `staff123`
+
+---
+
+## 💻 Mode Development
+
+Jika Anda ingin mengubah kode React (frontend) dan melihat perubahan secara _real-time_ (hot-reload), buka dua terminal:
+
+**Terminal 1 (Backend Laravel):**
 
 ```bash
-# 1. Install PHP dependencies
-composer install
+php artisan serve
+```
 
-# 2. Copy environment & generate key
-cp .env.example .env
-php artisan key:generate
+**Terminal 2 (Frontend React):**
 
-# 3. Setup MySQL database
-# Edit .env → DB_DATABASE, DB_USERNAME, DB_PASSWORD
-php artisan migrate --seed
-
-# 4. Build frontend
+```bash
 cd frontend
-yarn install
-BUILD_PATH=../public/app yarn build
-cd ..
-
-# 5. Run server
-php artisan serve
+npm start
 ```
 
-Buka http://localhost:8000 → Login: `admin / admin123` atau `staff / staff123`
-
-## Development Mode
-
-```bash
-# Terminal 1: Laravel API
-php artisan serve
-
-# Terminal 2: React dev server (hot reload)
-cd frontend && yarn start
-```
-
-## API Endpoints
-
-| Endpoint | Deskripsi |
-|----------|-----------|
-| `POST /api/auth/login` | Login |
-| `GET /api/dashboard/summary` | KPI Dashboard |
-| `GET /api/pelanggan` | List pelanggan |
-| `GET /api/barang` | List barang & stok |
-| `POST /api/penyewaan` | Buat kontrak sewa |
-| `POST /api/penjualan` | Catat penjualan |
-| `POST /api/pengembalian` | Proses pengembalian |
-| `GET /api/laporan/*` | Laporan (penjualan/penyewaan/stok) |
-
-Lihat semua routes: `php artisan route:list --path=api`
-
-## Project Structure
-
-```
-├── app/
-│   ├── Http/Controllers/Api/    # API Controllers
-│   ├── Models/                  # Eloquent Models
-│   └── Services/                # Business Logic
-├── database/
-│   ├── migrations/              # Database schema
-│   └── seeders/                 # Sample data
-├── frontend/                    # React SPA (jangan diubah)
-│   └── src/
-├── routes/
-│   ├── api.php                  # API routes
-│   └── web.php                  # SPA catch-all
-└── public/app/                  # React build output (gitignored)
-```
+_Gunakan `http://localhost:3000` di browser saat mode development agar React me-refresh otomatis setiap kali file
+disimpan._
