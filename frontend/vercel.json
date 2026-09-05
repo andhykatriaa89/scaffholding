@@ -1,0 +1,18 @@
+{
+  "buildCommand": "CI=false npm run build",
+  "installCommand": "npm install --legacy-peer-deps",
+  "rewrites": [
+    {
+      "source": "/sanctum/:match*",
+      "destination": "http://157.20.254.16/sanctum/:match*"
+    },
+    {
+      "source": "/api/:match*",
+      "destination": "http://157.20.254.16/api/:match*"
+    },
+    {
+      "source": "/(.*)",
+      "destination": "/"
+    }
+  ]
+}

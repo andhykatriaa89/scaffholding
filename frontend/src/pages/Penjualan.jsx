@@ -51,10 +51,12 @@ export default function Penjualan() {
       <div className="lg:col-span-2 bg-white rounded-[12px] p-7 shadow-sm border border-slate-200/60 space-y-6">
         <div>
           <div className="flex items-center gap-2 mb-1">
-            <ShoppingCart size={20} className="text-[#2563EB]" strokeWidth={2.5} />
+            <div className="w-8 h-8 rounded-lg bg-blue-100 flex items-center justify-center">
+              <ShoppingCart size={18} className="text-[#2563EB]" strokeWidth={2.5} />
+            </div>
             <h2 className="text-[18px] font-bold text-slate-800 tracking-tight">Transaksi Penjualan Baru</h2>
           </div>
-          <div className="text-[13px] text-slate-500 font-medium">Barang keluar permanen dari stok gudang setelah transaksi disimpan.</div>
+          <div className="text-[13px] text-slate-500 font-medium ml-10">Barang keluar permanen dari stok gudang setelah transaksi disimpan.</div>
         </div>
         
         <div className="space-y-6">
@@ -79,8 +81,11 @@ export default function Penjualan() {
         </div>
       </div>
 
-      <div className="bg-white rounded-[12px] p-7 shadow-sm border border-slate-200/60 space-y-6 lg:sticky lg:top-[100px]" data-testid="penjualan-ringkasan">
-        <h3 className="text-[16px] font-bold text-slate-800 border-b border-slate-100 pb-4">Ringkasan Tagihan</h3>
+      <div className="bg-white rounded-[12px] shadow-sm border border-slate-200/60 space-y-6 lg:sticky lg:top-[100px] overflow-hidden" data-testid="penjualan-ringkasan">
+        <div className="bg-gradient-to-r from-blue-50/80 to-white px-7 pt-6 pb-4 border-b border-slate-100">
+          <h3 className="text-[16px] font-bold text-slate-800">Ringkasan Tagihan</h3>
+        </div>
+        <div className="px-7 pb-7 space-y-6">
         
         <div className="text-[14px] space-y-4">
           <div className="flex justify-between items-center text-slate-600">
@@ -111,7 +116,7 @@ export default function Penjualan() {
         <button
           data-testid="penjualan-simpan-btn"
           onClick={simpan}
-          className="w-full h-12 bg-[#2563EB] hover:bg-blue-700 text-white text-[15px] font-bold rounded-xl transition-all shadow-sm flex items-center justify-center gap-2 mt-4"
+          className="w-full h-12 bg-gradient-to-r from-[#2563EB] to-[#1D4ED8] hover:from-[#1D4ED8] hover:to-[#1E40AF] text-white text-[15px] font-bold rounded-xl transition-all shadow-md flex items-center justify-center gap-2 mt-4"
         >
           <CheckCircle2 size={20} strokeWidth={2.5} />
           Proses Transaksi
@@ -119,6 +124,7 @@ export default function Penjualan() {
         <p className="text-[11px] font-medium text-slate-400 leading-relaxed text-center px-2 mt-4">
           Pembayaran hanya dicatat sebagai data, tidak diproses melalui sistem. Nota dicetak manual dari halaman laporan.
         </p>
+        </div>
       </div>
     </div>
   );

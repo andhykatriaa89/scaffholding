@@ -1,9 +1,9 @@
-import Axios from 'axios';
+import Axios from "axios";
 
 const axios = Axios.create({
-  baseURL: window.location.port === '3000' ? 'http://127.0.0.1:8000' : '',
+  baseURL: process.env.REACT_APP_API_URL || (window.location.port === "3000" ? "http://127.0.0.1:8000" : ""),
   headers: {
-    'X-Requested-With': 'XMLHttpRequest',
+    "X-Requested-With": "XMLHttpRequest",
   },
   withCredentials: true,
 });

@@ -6,6 +6,10 @@
         "build:frontend": "cd frontend && BUILD_PATH=../public/app npm run build",
         "serve": "php artisan serve",
         "setup": "composer install && php artisan migrate --seed && yarn build:frontend",
-        "fresh": "php artisan migrate:fresh --seed"
+        "fresh": "php artisan migrate:fresh --seed",
+        "start": "npx concurrently \"php artisan serve\" \"cd frontend && npm start\""
+    },
+    "devDependencies": {
+        "concurrently": "^10.0.5"
     }
 }

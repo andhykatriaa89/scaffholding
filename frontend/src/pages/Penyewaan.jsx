@@ -58,10 +58,12 @@ export default function Penyewaan() {
         <div className="flex items-start justify-between">
           <div>
             <div className="flex items-center gap-2 mb-1">
-              <CalendarClock size={20} className="text-[#EA580C]" strokeWidth={2.5} />
+              <div className="w-8 h-8 rounded-lg bg-orange-100 flex items-center justify-center">
+                <CalendarClock size={18} className="text-[#EA580C]" strokeWidth={2.5} />
+              </div>
               <h2 className="text-[18px] font-bold text-slate-800 tracking-tight">Kontrak Penyewaan Baru</h2>
             </div>
-            <div className="text-[13px] text-slate-500 font-medium">Stok berpindah ke status "disewa" sampai barang dikembalikan &amp; dicek kondisinya.</div>
+            <div className="text-[13px] text-slate-500 font-medium ml-10">Stok berpindah ke status "disewa" sampai barang dikembalikan &amp; dicek kondisinya.</div>
           </div>
           <div className="bg-[#EFF6FF] text-[#2563EB] px-3 py-1.5 rounded-lg text-[13px] font-bold border border-blue-100 flex items-center gap-1.5">
             <span className="w-2 h-2 rounded-full bg-blue-500 animate-pulse"></span>
@@ -105,8 +107,11 @@ export default function Penyewaan() {
         </div>
       </div>
 
-      <div className="bg-white rounded-[12px] p-7 shadow-sm border border-slate-200/60 space-y-6 lg:sticky lg:top-[100px]" data-testid="penyewaan-ringkasan">
-        <h3 className="text-[16px] font-bold text-slate-800 border-b border-slate-100 pb-4">Estimasi Biaya Sewa</h3>
+      <div className="bg-white rounded-[12px] shadow-sm border border-slate-200/60 space-y-6 lg:sticky lg:top-[100px] overflow-hidden" data-testid="penyewaan-ringkasan">
+        <div className="bg-gradient-to-r from-orange-50/80 to-white px-7 pt-6 pb-4 border-b border-slate-100">
+          <h3 className="text-[16px] font-bold text-slate-800">Estimasi Biaya Sewa</h3>
+        </div>
+        <div className="px-7 pb-7 space-y-6">
         
         <div className="text-[14px] space-y-4">
           <div className="flex justify-between items-center text-slate-600">
@@ -144,11 +149,12 @@ export default function Penyewaan() {
         <button
           data-testid="penyewaan-simpan-btn"
           onClick={simpan}
-          className="w-full h-12 bg-[#2563EB] hover:bg-blue-700 text-white text-[15px] font-bold rounded-xl transition-all shadow-sm flex items-center justify-center gap-2 mt-4"
+          className="w-full h-12 bg-gradient-to-r from-[#2563EB] to-[#1D4ED8] hover:from-[#1D4ED8] hover:to-[#1E40AF] text-white text-[15px] font-bold rounded-xl transition-all shadow-md flex items-center justify-center gap-2 mt-4"
         >
           <CheckCircle2 size={20} strokeWidth={2.5} />
           Simpan Kontrak Sewa
         </button>
+        </div>
       </div>
     </div>
   );

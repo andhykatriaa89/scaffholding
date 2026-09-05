@@ -74,8 +74,8 @@ export default function Pelanggan() {
 
   return (
     <div className="space-y-6 max-w-[1400px]">
-      <div className="bg-white rounded-[12px] p-6 shadow-sm border border-slate-200/60 flex flex-col">
-        <div className="flex flex-wrap items-center justify-between gap-4 mb-6">
+      <div className="bg-white rounded-[12px] shadow-sm border border-slate-200/60 flex flex-col overflow-hidden">
+        <div className="flex flex-wrap items-center justify-between gap-4 p-6 pb-5 border-b border-slate-100 bg-gradient-to-r from-indigo-50/60 to-white">
           <div className="flex items-center gap-3">
             <div className="relative w-[320px]">
               <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
@@ -105,13 +105,13 @@ export default function Pelanggan() {
           <button
             data-testid="pelanggan-tambah-btn"
             onClick={openTambah}
-            className="h-10 px-4 inline-flex items-center gap-2 bg-[#2563EB] hover:bg-blue-700 text-white text-[13px] font-bold rounded-lg transition-colors shadow-sm"
+            className="h-10 px-4 inline-flex items-center gap-2 bg-gradient-to-r from-[#2563EB] to-[#1D4ED8] hover:from-[#1D4ED8] hover:to-[#1E40AF] text-white text-[13px] font-bold rounded-lg transition-all shadow-md"
           >
             <Plus size={16} strokeWidth={2.5} /> Tambah Pelanggan
           </button>
         </div>
 
-        <div className="overflow-x-auto">
+        <div className="overflow-x-auto px-6 pb-5">
           <table className="w-full text-left border-collapse" data-testid="pelanggan-table">
             <thead>
               <tr className="border-b-2 border-slate-100 text-[13px] text-slate-500">
@@ -129,7 +129,7 @@ export default function Pelanggan() {
               {isLoading ? (
                 <tr><td colSpan={8} className="py-12 text-center text-slate-500 font-medium">Memuat data...</td></tr>
               ) : filtered.map((p) => (
-                <tr key={p.id} className="border-b border-slate-100 last:border-0 hover:bg-slate-50/70 transition-colors">
+                <tr key={p.id} className="border-b border-slate-100 last:border-0 hover:bg-blue-50/40 transition-colors">
                   <td className="py-4 px-4 text-slate-500">{p.id}</td>
                   <td className="py-4 px-2">{p.nama}</td>
                   <td className="py-4 px-2"><StatusBadge status={p.jenis} /></td>

@@ -2,7 +2,7 @@
   "name": "frontend",
   "version": "0.1.0",
   "private": true,
-  "homepage": "/app",
+  "homepage": "/",
   "dependencies": {
     "@hookform/resolvers": "5.0.1",
     "@radix-ui/react-accordion": "1.2.8",
@@ -68,8 +68,9 @@
   },
   "scripts": {
     "start": "craco start",
-    "build": "craco build && rm -rf ../public/app && cp -R build ../public/app",
-    "test": "craco test"
+    "build": "CI=false craco build",
+    "test": "craco test",
+    "build:laravel": "CI=false craco build && rm -rf ../public/app && cp -R build ../public/app"
   },
   "browserslist": {
     "production": [

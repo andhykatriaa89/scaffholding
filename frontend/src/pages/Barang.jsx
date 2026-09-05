@@ -98,8 +98,8 @@ export default function Barang() {
 
   return (
     <div className="space-y-6 max-w-[1400px]">
-      <div className="bg-white rounded-[12px] p-6 shadow-sm border border-slate-200/60 flex flex-col">
-        <div className="flex flex-wrap items-center justify-between gap-4 mb-6">
+      <div className="bg-white rounded-[12px] shadow-sm border border-slate-200/60 flex flex-col overflow-hidden">
+        <div className="flex flex-wrap items-center justify-between gap-4 p-6 pb-5 border-b border-slate-100 bg-gradient-to-r from-blue-50/60 to-white">
           <div className="flex items-center gap-3">
             <div className="relative w-[320px]">
               <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
@@ -131,13 +131,13 @@ export default function Barang() {
           </div>
           <button
             onClick={() => setShowAdd(true)}
-            className="h-10 px-4 inline-flex items-center gap-2 bg-[#2563EB] hover:bg-blue-700 text-white text-[13px] font-bold rounded-lg transition-colors shadow-sm"
+            className="h-10 px-4 inline-flex items-center gap-2 bg-gradient-to-r from-[#2563EB] to-[#1D4ED8] hover:from-[#1D4ED8] hover:to-[#1E40AF] text-white text-[13px] font-bold rounded-lg transition-all shadow-md"
           >
             <Plus size={16} strokeWidth={2.5} /> Tambah Barang
           </button>
         </div>
 
-        <div className="overflow-x-auto">
+        <div className="overflow-x-auto px-6">
           <table className="w-full text-left border-collapse" data-testid="barang-table">
             <thead>
               <tr className="border-b-2 border-slate-100 text-[13px] text-slate-500">
@@ -159,11 +159,11 @@ export default function Barang() {
                 const tersedia = stokTersedia(b);
                 const menipis = tersedia < b.minStok;
                 return (
-                  <tr key={b.id} className="border-b border-slate-100 last:border-0 hover:bg-slate-50/70 transition-colors">
+                  <tr key={b.id} className="border-b border-slate-100 last:border-0 hover:bg-blue-50/40 transition-colors">
                     <td className="py-4 px-4">
                       <div className="flex items-center gap-3">
-                        <div className="w-[42px] h-[42px] rounded-[8px] bg-slate-100 border border-slate-200 flex items-center justify-center shrink-0">
-                          <span className="text-[14px] font-bold text-slate-400">{KATEGORI_INISIAL[b.kategori]}</span>
+                        <div className="w-[42px] h-[42px] rounded-[8px] bg-gradient-to-br from-[#1B2A4A] to-[#2563EB] flex items-center justify-center shrink-0">
+                          <span className="text-[13px] font-bold text-white">{KATEGORI_INISIAL[b.kategori]}</span>
                         </div>
                         <div className="leading-tight">
                           <div className="font-bold text-slate-800">{b.nama}</div>
@@ -210,7 +210,7 @@ export default function Barang() {
             </tbody>
           </table>
         </div>
-        <p className="mt-6 text-[12px] font-medium text-slate-400 px-4">
+        <p className="mx-6 mt-4 mb-5 text-[12px] font-medium text-slate-400">
           *Tersedia = stok total − sedang disewa − ditandai rusak. Batas menipis mengikuti stok minimum tiap barang.
         </p>
       </div>

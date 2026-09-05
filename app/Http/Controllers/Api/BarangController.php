@@ -47,6 +47,7 @@ class BarangController extends Controller
             'harga_sewa' => 'required|numeric',
             'stok_total' => 'required|integer',
             'min_stok' => 'required|integer',
+            'kondisi' => 'nullable|string|in:Baik,Perlu Pengecekan',
         ]);
 
         $b = Barang::create([
@@ -59,7 +60,7 @@ class BarangController extends Controller
             'min_stok' => $validated['min_stok'],
             'stok_disewa' => 0,
             'stok_rusak' => 0,
-            'kondisi' => 'Sangat Baik',
+            'kondisi' => $validated['kondisi'] ?? 'Baik',
         ]);
 
         return response()->json($this->formatBarang($b), 201);
@@ -97,6 +98,7 @@ class BarangController extends Controller
             'harga_sewa' => 'sometimes|numeric',
             'stok_total' => 'sometimes|integer',
             'min_stok' => 'sometimes|integer',
+            'kondisi' => 'sometimes|string|in:Baik,Perlu Pengecekan',
         ]);
 
         $b->update($validated);
@@ -110,8 +112,21 @@ class BarangController extends Controller
     public function destroy(string $id): JsonResponse
     {
         $b = Barang::findOrFail($id);
-        $b->delete();
-        return response()->json(['message' => 'Barang deleted successfully']);
+
+        if ($b->stok_disewa > 0) {
+            return response()->json([
+                'message' => 'Barang tidak dapat dihapus karena sebagian stok masih dalam status sedang disewa.'
+            ], 422);
+        }
+
+        try {
+            $b->delete();
+            return response()->json(['message' => 'Barang berhasil dihapus']);
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Barang tidak dapat dihapus karena sudah terhubung dengan riwayat transaksi penyewaan atau penjualan.'
+            ], 422);
+        }
     }
 
     /**

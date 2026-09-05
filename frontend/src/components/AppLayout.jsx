@@ -4,6 +4,7 @@ import {
   Undo2, FileBarChart, Search, LogOut, ChevronRight, Construction,
 } from "lucide-react";
 import LogoPT from "../PT.png";
+import scaffoldingBg from "../scaffolding-bg.jpg";
 
 const NAV = [
   { to: "/dashboard", label: "Dashboard", icon: LayoutGrid },
@@ -31,13 +32,13 @@ export default function AppLayout({ user, onLogout, children }) {
   const crumb = CRUMB[pathname] || "";
 
   return (
-    <div className="flex min-h-screen bg-[#F4F4F5]">
+    <div className="flex min-h-screen bg-[#EEF2F7]">
       <aside
         data-testid="sidebar"
-        className="fixed inset-y-0 left-0 w-[240px] bg-white shadow-[1px_0_10px_rgba(0,0,0,0.03)] flex flex-col z-30 border-r border-slate-200"
+        className="fixed inset-y-0 left-0 w-[240px] bg-[#1B2A4A] flex flex-col z-30"
       >
-        <div className="flex items-center justify-center px-6 h-[70px] border-b border-slate-100">
-          <img src={LogoPT} alt="PT Logo" className="h-9 w-auto object-contain shrink-0" />
+        <div className="flex items-center justify-center px-6 h-[70px] border-b border-white/10">
+          <img src={LogoPT} alt="PT Logo" className="h-9 w-auto object-contain shrink-0 brightness-0 invert" />
         </div>
         <nav className="flex-1 py-6 px-4 space-y-1 overflow-y-auto">
           {NAV.map(({ to, label, icon: Icon }) => (
@@ -48,25 +49,25 @@ export default function AppLayout({ user, onLogout, children }) {
               className={({ isActive }) =>
                 `flex items-center gap-3 px-3 py-2.5 rounded-lg text-[13.5px] font-medium transition-colors ${
                   isActive
-                    ? "bg-blue-50 text-blue-700"
-                    : "text-slate-600 hover:bg-slate-50 hover:text-slate-900"
+                    ? "bg-white/15 text-white shadow-sm"
+                    : "text-white/60 hover:bg-white/8 hover:text-white/90"
                 }`
               }
             >
               {({ isActive }) => (
                 <>
-                  <Icon size={18} strokeWidth={isActive ? 2.5 : 2} className={isActive ? "text-blue-600" : "text-slate-400"} />
+                  <Icon size={18} strokeWidth={isActive ? 2.5 : 2} className={isActive ? "text-[#F59E0B]" : "text-white/40"} />
                   {label}
                 </>
               )}
             </NavLink>
           ))}
         </nav>
-        <div className="p-4 border-t border-slate-100 bg-slate-50/50">
-          <div className="bg-white rounded-lg p-3 border border-slate-200 flex items-center gap-3 shadow-sm">
-             <div className="w-2 h-2 rounded-full bg-emerald-500 shrink-0" />
-             <div className="text-[11.5px] text-slate-700 font-medium leading-tight">
-               Gudang Narogong<br /><span className="text-slate-500 text-[10.5px] font-normal">v1.0 · Sistem Internal</span>
+        <div className="p-4 border-t border-white/10">
+          <div className="bg-white/8 rounded-lg p-3 border border-white/10 flex items-center gap-3">
+             <div className="w-2 h-2 rounded-full bg-emerald-400 shrink-0" />
+             <div className="text-[11.5px] text-white/80 font-medium leading-tight">
+               Gudang Narogong<br /><span className="text-white/50 text-[10.5px] font-normal">v1.0 · Sistem Internal</span>
              </div>
           </div>
         </div>
@@ -75,44 +76,51 @@ export default function AppLayout({ user, onLogout, children }) {
       <div className="flex-1 ml-[240px] flex flex-col min-w-0">
         <header
           data-testid="topbar"
-          className="sticky top-0 z-20 h-[70px] bg-white/80 backdrop-blur-md border-b border-[#E4E4E7] flex items-center gap-4 px-6 shadow-sm"
+          className="sticky top-0 z-20 h-[70px] bg-white/90 backdrop-blur-md border-b border-[#D6DCE5] flex items-center gap-4 px-6 shadow-sm"
         >
-          <div className="flex items-center gap-1.5 text-[12px] text-[#18181B]/55 min-w-0">
+          <div className="flex items-center gap-1.5 text-[12px] text-slate-400 min-w-0">
             {crumb.split(" / ").map((part, i, arr) => (
               <span key={i} className="flex items-center gap-1.5 whitespace-nowrap">
-                <span className={i === arr.length - 1 ? "text-[#18181B] font-medium" : ""}>{part}</span>
-                {i < arr.length - 1 && <ChevronRight size={12} className="text-[#18181B]/30" />}
+                <span className={i === arr.length - 1 ? "text-[#1B2A4A] font-semibold" : ""}>{part}</span>
+                {i < arr.length - 1 && <ChevronRight size={12} className="text-slate-300" />}
               </span>
             ))}
           </div>
           <div className="flex-1" />
           <div className="relative w-[260px] hidden md:block">
-            <Search size={14} className="absolute left-2.5 top-1/2 -translate-y-1/2 text-[#18181B]/35" />
+            <Search size={14} className="absolute left-2.5 top-1/2 -translate-y-1/2 text-slate-400" />
             <input
               data-testid="global-search"
               placeholder="Cari transaksi, barang, pelanggan…"
-              className="w-full h-[30px] pl-8 pr-3 text-[12px] bg-[#F4F4F5] border border-[#E4E4E7] rounded-[4px] outline-none focus:border-[#A1A1AA]"
+              className="w-full h-[30px] pl-8 pr-3 text-[12px] bg-[#F0F3F8] border border-[#D6DCE5] rounded-[4px] outline-none focus:border-[#2563EB] focus:ring-1 focus:ring-blue-200"
             />
           </div>
-          <div className="flex items-center gap-2.5 pl-3 border-l border-[#E4E4E7]">
-            <div className="w-7 h-7 rounded-[4px] bg-[#3F3F46] text-white text-[11px] font-semibold flex items-center justify-center">
+          <div className="flex items-center gap-2.5 pl-3 border-l border-[#D6DCE5]">
+            <div className="w-7 h-7 rounded-[4px] bg-gradient-to-br from-[#2563EB] to-[#1B2A4A] text-white text-[11px] font-semibold flex items-center justify-center">
               {user.nama.slice(0, 2).toUpperCase()}
             </div>
             <div className="leading-tight hidden sm:block">
-              <div className="text-[12px] font-medium">{user.nama}</div>
-              <div className="text-[10px] text-[#18181B]/50">{user.role}</div>
+              <div className="text-[12px] font-semibold text-[#1B2A4A]">{user.nama}</div>
+              <div className="text-[10px] text-slate-400">{user.role}</div>
             </div>
             <button
               data-testid="logout-btn"
               onClick={() => { onLogout(); navigate("/login"); }}
               title="Keluar"
-              className="p-1.5 rounded-[4px] text-[#18181B]/45 hover:text-[#DC2626] hover:bg-[#DC2626]/5 transition-colors"
+              className="p-1.5 rounded-[4px] text-slate-400 hover:text-[#DC2626] hover:bg-[#DC2626]/5 transition-colors"
             >
               <LogOut size={15} />
             </button>
           </div>
         </header>
-        <main className="flex-1 p-5">{children}</main>
+        <main className="flex-1 relative">
+          {/* Background Image */}
+          <div className="absolute inset-0 z-0">
+            <img src={scaffoldingBg} alt="" className="w-full h-full object-cover" />
+            <div className="absolute inset-0 bg-[#1B2A4A]/75" />
+          </div>
+          <div className="relative z-10 p-5">{children}</div>
+        </main>
       </div>
     </div>
   );

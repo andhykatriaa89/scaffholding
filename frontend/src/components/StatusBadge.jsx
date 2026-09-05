@@ -1,20 +1,20 @@
 export const StatusBadge = ({ status }) => {
   const map = {
-    Aktif: "bg-[#F4F4F5] text-[#18181B] border-[#D4D4D8]",
-    Selesai: "bg-[#ECFDF5] text-[#047857] border-[#A7F3D0]",
-    Lunas: "bg-[#ECFDF5] text-[#047857] border-[#A7F3D0]",
-    Telat: "bg-[#FEF2F2] text-[#B91C1C] border-[#FECACA]",
-    Baik: "bg-[#ECFDF5] text-[#047857] border-[#A7F3D0]",
-    "Perlu Pengecekan": "bg-[#FFFBEB] text-[#92400E] border-[#FDE68A]",
-    Perusahaan: "bg-[#F4F4F5] text-[#3F3F46] border-[#E4E4E7]",
-    Perorangan: "bg-white text-[#52525B] border-[#E4E4E7]",
-    Menipis: "bg-[#FEF2F2] text-[#B91C1C] border-[#FECACA]",
-    Cukup: "bg-[#ECFDF5] text-[#047857] border-[#A7F3D0]",
+    Aktif: "bg-blue-50 text-blue-700 border-blue-200",
+    Selesai: "bg-emerald-50 text-emerald-700 border-emerald-200",
+    Lunas: "bg-emerald-50 text-emerald-700 border-emerald-200",
+    Telat: "bg-red-50 text-red-700 border-red-200",
+    Baik: "bg-emerald-50 text-emerald-700 border-emerald-200",
+    "Perlu Pengecekan": "bg-amber-50 text-amber-700 border-amber-200",
+    Perusahaan: "bg-indigo-50 text-indigo-700 border-indigo-200",
+    Perorangan: "bg-violet-50 text-violet-600 border-violet-200",
+    Menipis: "bg-red-50 text-red-700 border-red-200",
+    Cukup: "bg-emerald-50 text-emerald-700 border-emerald-200",
   };
   return (
     <span
       data-testid={`badge-${status.toLowerCase().replace(/\s/g, "-")}`}
-      className={`inline-flex items-center border px-1.5 py-0.5 text-[11px] font-medium rounded-[4px] whitespace-nowrap ${map[status] || map.Perorangan}`}
+      className={`inline-flex items-center border px-2 py-0.5 text-[11px] font-semibold rounded-md whitespace-nowrap ${map[status] || "bg-slate-50 text-slate-600 border-slate-200"}`}
     >
       {status}
     </span>

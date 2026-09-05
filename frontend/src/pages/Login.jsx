@@ -24,7 +24,11 @@ export default function Login({ onLogin }) {
       onLogin(res.data.user);
       navigate("/dashboard");
     } catch (error) {
-      if (error.response && error.response.status === 401) {
+      if (error.response && (error.response.status === 401 || error.response.status === 422)) {
+        const msg = error.response.data?.errors?.username?.[0] || error.response.data?.message || "Username atau password salah.";
+        setErr(msg);
+        return;
+      } else if (error.response && error.response.status === 401) {
         setErr("Username atau password salah.");
       } else {
         setErr("Terjadi kesalahan pada server.");
@@ -35,54 +39,56 @@ export default function Login({ onLogin }) {
   };
 
   return (
-    <div className="min-h-screen flex bg-white">
+    <div className="min-h-screen flex bg-[#F0F3F8]">
       <div className="flex-1 flex items-center justify-center px-6">
-        <div className="w-full max-w-[360px]">
-          <div className="flex flex-col items-start gap-4 mb-8">
-            <img src={LogoPT} alt="PT Logo" className="h-14 w-auto object-contain shrink-0" />
-            <div className="leading-relaxed">
-              <div className="text-[18px] font-bold text-[#09090B] tracking-tight">PT Sucoot Scaform Indonesia</div>
-              <div className="text-[13px] text-[#52525B]">Sistem Informasi Penyewaan &amp; Penjualan Scaffolding</div>
+        <div className="w-full max-w-[380px]">
+          <div className="bg-white rounded-2xl shadow-lg border border-slate-200/60 p-8">
+            <div className="flex flex-col items-start gap-4 mb-8">
+              <img src={LogoPT} alt="PT Logo" className="h-14 w-auto object-contain shrink-0" />
+              <div className="leading-relaxed">
+                <div className="text-[18px] font-bold text-[#1B2A4A] tracking-tight">PT Sucoot Scaform Indonesia</div>
+                <div className="text-[13px] text-slate-500">Sistem Informasi Penyewaan &amp; Penjualan Scaffolding</div>
+              </div>
             </div>
-          </div>
 
-          <form onSubmit={submit} data-testid="login-form" className="space-y-4">
-            <div>
-              <label className="block text-[12px] font-medium mb-1.5 text-[#3F3F46]">Username</label>
-              <input
-                data-testid="login-username-input"
-                value={u}
-                onChange={(e) => setU(e.target.value)}
-                placeholder="admin atau staff"
-                className="w-full h-9 px-3 text-[13px] border border-[#D4D4D8] rounded-[4px] outline-none focus:border-[#18181B] focus:ring-1 focus:ring-[#18181B] bg-white"
-              />
-            </div>
-            <div>
-              <label className="block text-[12px] font-medium mb-1.5 text-[#3F3F46]">Password</label>
-              <input
-                data-testid="login-password-input"
-                type="password"
-                value={p}
-                onChange={(e) => setP(e.target.value)}
-                placeholder="••••••••"
-                className="w-full h-9 px-3 text-[13px] border border-[#D4D4D8] rounded-[4px] outline-none focus:border-[#18181B] focus:ring-1 focus:ring-[#18181B] bg-white font-mono"
-              />
-            </div>
-            {err && (
-              <p data-testid="login-error" className="text-[12px] text-[#DC2626] leading-snug">{err}</p>
-            )}
-            <button
-              data-testid="login-submit-btn"
-              type="submit"
-              disabled={loading}
-              className="w-full h-9 bg-[#09090B] hover:bg-[#27272A] disabled:opacity-50 text-white text-[13px] font-medium rounded-[4px] transition-colors"
-            >
-              {loading ? "Memproses..." : "Masuk"}
-            </button>
-          </form>
-          <p className="mt-6 text-[10px] text-[#A1A1AA]">
-            Hubungi bagian IT jika lupa kata sandi — ext. 114
-          </p>
+            <form onSubmit={submit} data-testid="login-form" className="space-y-4">
+              <div>
+                <label className="block text-[12px] font-semibold mb-1.5 text-slate-600">Username</label>
+                <input
+                  data-testid="login-username-input"
+                  value={u}
+                  onChange={(e) => setU(e.target.value)}
+                  placeholder="admin atau staff"
+                  className="w-full h-10 px-3 text-[13px] border border-slate-200 rounded-lg outline-none focus:border-[#2563EB] focus:ring-2 focus:ring-blue-100 bg-[#F8FAFC] transition-all"
+                />
+              </div>
+              <div>
+                <label className="block text-[12px] font-semibold mb-1.5 text-slate-600">Password</label>
+                <input
+                  data-testid="login-password-input"
+                  type="password"
+                  value={p}
+                  onChange={(e) => setP(e.target.value)}
+                  placeholder="••••••••"
+                  className="w-full h-10 px-3 text-[13px] border border-slate-200 rounded-lg outline-none focus:border-[#2563EB] focus:ring-2 focus:ring-blue-100 bg-[#F8FAFC] font-mono transition-all"
+                />
+              </div>
+              {err && (
+                <p data-testid="login-error" className="text-[12px] text-[#DC2626] leading-snug bg-red-50 px-3 py-2 rounded-md border border-red-100">{err}</p>
+              )}
+              <button
+                data-testid="login-submit-btn"
+                type="submit"
+                disabled={loading}
+                className="w-full h-10 bg-gradient-to-r from-[#2563EB] to-[#1D4ED8] hover:from-[#1D4ED8] hover:to-[#1E40AF] disabled:opacity-50 text-white text-[13px] font-semibold rounded-lg transition-all shadow-md"
+              >
+                {loading ? "Memproses..." : "Masuk"}
+              </button>
+            </form>
+            <p className="mt-5 text-[10px] text-slate-400 text-center">
+              Hubungi bagian IT jika lupa kata sandi — ext. 114
+            </p>
+          </div>
         </div>
       </div>
       <div className="hidden lg:block w-[45%] relative">
@@ -91,9 +97,9 @@ export default function Login({ onLogin }) {
           alt="Scaffolding di lokasi proyek"
           className="absolute inset-0 w-full h-full object-cover"
         />
-        <div className="absolute inset-0 bg-[#09090B]/60" />
+        <div className="absolute inset-0 bg-gradient-to-t from-[#1B2A4A]/90 via-[#1B2A4A]/50 to-[#1B2A4A]/30" />
         <div className="absolute bottom-8 left-8 right-8">
-          <div className="w-8 h-[3px] bg-[#EAB308] mb-3" />
+          <div className="w-10 h-[3px] bg-[#F59E0B] mb-3 rounded-full" />
           <div className="text-[13px] font-medium text-white">Gerbang Biru, Jl. Marunda Makmur No.86, Sagara Makmur, Tarumajaya, Bekasi Regency, West Java 17211</div>
           <div className="text-[11px] text-white/60 mt-1 max-w-[380px] leading-relaxed">
             Pencatatan penyewaan, penjualan, stok, dan pengembalian scaffolding dalam satu sistem internal.

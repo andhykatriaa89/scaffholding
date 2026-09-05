@@ -70,10 +70,12 @@ export default function Pengembalian() {
       {/* Search Section */}
       <div className="bg-white rounded-[12px] p-7 shadow-sm border border-slate-200/60">
         <div className="flex items-center gap-2 mb-1">
-          <Undo2 size={20} className="text-[#EA580C]" strokeWidth={2.5} />
+          <div className="w-8 h-8 rounded-lg bg-orange-100 flex items-center justify-center">
+            <Undo2 size={18} className="text-[#EA580C]" strokeWidth={2.5} />
+          </div>
           <h2 className="text-[18px] font-bold text-slate-800 tracking-tight">Cari Kontrak Sewa Aktif</h2>
         </div>
-        <div className="text-[13px] text-slate-500 font-medium mb-6">Masukkan ID sewa atau nama pelanggan untuk memproses pengembalian barang.</div>
+        <div className="text-[13px] text-slate-500 font-medium mb-6 ml-10">Masukkan ID sewa atau nama pelanggan untuk memproses pengembalian barang.</div>
         
         <div className="relative w-full max-w-[480px]">
           <Search size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" />
@@ -187,7 +189,7 @@ export default function Pengembalian() {
             <button
               data-testid="pengembalian-proses-btn"
               onClick={proses}
-              className="h-12 px-6 bg-[#2563EB] hover:bg-blue-700 text-white text-[15px] font-bold rounded-xl transition-all shadow-sm flex items-center gap-2"
+              className="h-12 px-6 bg-gradient-to-r from-[#2563EB] to-[#1D4ED8] hover:from-[#1D4ED8] hover:to-[#1E40AF] text-white text-[15px] font-bold rounded-xl transition-all shadow-md flex items-center gap-2"
             >
               <CheckCircle2 size={20} strokeWidth={2.5} />
               Proses Pengembalian
