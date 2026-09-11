@@ -31,7 +31,7 @@ class BarangController extends Controller
 
         $barang = $query->orderBy('id')->get();
 
-        return response()->json($barang->map(fn ($b) => $this->formatBarang($b)));
+        return response()->json($barang->map(fn (Barang $b) => $this->formatBarang($b)));
     }
 
     /**
@@ -42,6 +42,7 @@ class BarangController extends Controller
         $validated = $request->validate([
             'id' => 'required|string|unique:barang,id',
             'nama' => 'required|string',
+            'keterangan' => 'nullable|string',
             'kategori' => 'required|string',
             'harga_jual' => 'required|numeric',
             'harga_sewa' => 'required|numeric',
@@ -53,6 +54,7 @@ class BarangController extends Controller
         $b = Barang::create([
             'id' => $validated['id'],
             'nama' => $validated['nama'],
+            'keterangan' => $validated['keterangan'] ?? $validated['nama'],
             'kategori' => $validated['kategori'],
             'harga_jual' => $validated['harga_jual'],
             'harga_sewa' => $validated['harga_sewa'],
@@ -93,6 +95,7 @@ class BarangController extends Controller
         
         $validated = $request->validate([
             'nama' => 'sometimes|string',
+            'keterangan' => 'sometimes|nullable|string',
             'kategori' => 'sometimes|string',
             'harga_jual' => 'sometimes|numeric',
             'harga_sewa' => 'sometimes|numeric',
@@ -131,12 +134,15 @@ class BarangController extends Controller
 
     /**
      * Format barang sesuai frontend mock data structure
+     *
+     * @param  \App\Models\Barang  $b
      */
-    private function formatBarang(Barang $b): array
+    private function formatBarang($b): array
     {
         return [
             'id' => $b->id,
             'nama' => $b->nama,
+            'keterangan' => $b->keterangan ?? $b->nama,
             'kategori' => $b->kategori,
             'hargaJual' => $b->harga_jual,
             'hargaSewa' => $b->harga_sewa,

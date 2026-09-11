@@ -12,7 +12,7 @@ class Barang extends Model
     protected $table = 'barang';
 
     protected $fillable = [
-        'id', 'nama', 'kategori', 'harga_jual', 'harga_sewa',
+        'id', 'nama', 'keterangan', 'kategori', 'harga_jual', 'harga_sewa',
         'stok_total', 'stok_disewa', 'stok_rusak', 'min_stok', 'kondisi',
     ];
 
@@ -40,7 +40,7 @@ class Barang extends Model
      */
     public function scopeStokMenipis($query)
     {
-        return $query->whereRaw('(stok_total - stok_disewa - stok_rusak) < min_stok');
+        return $query->whereRaw('(CAST(stok_total AS SIGNED) - CAST(stok_disewa AS SIGNED) - CAST(stok_rusak AS SIGNED)) < CAST(min_stok AS SIGNED)');
     }
 
     /**

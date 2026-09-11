@@ -91,7 +91,9 @@ export default function Barang() {
       serverRows.filter(
         (b) =>
           (kat === "Semua Kategori" || b.kategori === kat) &&
-          (b.nama.toLowerCase().includes(q.toLowerCase()) || b.id.toLowerCase().includes(q.toLowerCase()))
+          (b.nama?.toLowerCase().includes(q.toLowerCase()) ||
+           b.id?.toLowerCase().includes(q.toLowerCase()) ||
+           b.keterangan?.toLowerCase().includes(q.toLowerCase()))
       ),
     [serverRows, q, kat]
   );
@@ -230,7 +232,7 @@ export default function Barang() {
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <label className="block text-[13px] font-bold text-slate-700 mb-2">Kode Barang</label>
-                  <input required value={newB.id} onChange={e => setNewB({...newB, id: e.target.value})} placeholder="e.g. BRG-025" className="w-full h-11 px-4 text-[13px] font-medium bg-slate-50 border border-slate-200 rounded-lg outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100 transition-all" />
+                  <input required value={newB.id} onChange={e => setNewB({...newB, id: e.target.value})} placeholder="e.g. V60100" className="w-full h-11 px-4 text-[13px] font-medium bg-slate-50 border border-slate-200 rounded-lg outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100 transition-all" />
                 </div>
                 <div>
                   <label className="block text-[13px] font-bold text-slate-700 mb-2">Kategori</label>
