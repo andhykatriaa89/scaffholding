@@ -7,13 +7,13 @@ import LogoPT from "../PT.png";
 import scaffoldingBg from "../scaffolding-bg.jpg";
 
 const NAV = [
-  { to: "/dashboard", label: "Dashboard", icon: LayoutGrid },
-  { to: "/pelanggan", label: "Pelanggan", icon: Users },
+  { to: "/dashboard", label: "Dashboard", icon: LayoutGrid, adminOnly: true },
+  { to: "/pelanggan", label: "Pelanggan", icon: Users, adminOnly: true },
   { to: "/barang", label: "Barang & Stok", icon: Package },
-  { to: "/penjualan", label: "Transaksi Penjualan", icon: ShoppingCart },
-  { to: "/penyewaan", label: "Transaksi Penyewaan", icon: CalendarClock },
+  { to: "/penjualan", label: "Transaksi Penjualan", icon: ShoppingCart, adminOnly: true },
+  { to: "/penyewaan", label: "Transaksi Penyewaan", icon: CalendarClock, adminOnly: true },
   { to: "/pengembalian", label: "Pengembalian Sewa", icon: Undo2 },
-  { to: "/laporan", label: "Laporan", icon: FileBarChart },
+  { to: "/laporan", label: "Laporan", icon: FileBarChart, adminOnly: true },
 ];
 
 const CRUMB = {
@@ -30,6 +30,8 @@ export default function AppLayout({ user, onLogout, children }) {
   const { pathname } = useLocation();
   const navigate = useNavigate();
   const crumb = CRUMB[pathname] || "";
+  const isStaff = user?.role === "Staff Gudang" || Boolean(user?.role && user.role.toLowerCase().includes("staff"));
+  const navItems = NAV.filter((item) => !isStaff || !item.adminOnly);
 
   return (
     <div className="flex min-h-screen bg-[#EEF2F7]">
@@ -41,7 +43,7 @@ export default function AppLayout({ user, onLogout, children }) {
           <img src={LogoPT} alt="PT Logo" className="h-9 w-auto object-contain shrink-0 brightness-0 invert" />
         </div>
         <nav className="flex-1 py-6 px-4 space-y-1 overflow-y-auto">
-          {NAV.map(({ to, label, icon: Icon }) => (
+          {navItems.map(({ to, label, icon: Icon }) => (
             <NavLink
               key={to}
               to={to}
@@ -65,9 +67,9 @@ export default function AppLayout({ user, onLogout, children }) {
         </nav>
         <div className="p-4 border-t border-white/10">
           <div className="bg-white/8 rounded-lg p-3 border border-white/10 flex items-center gap-3">
-             <div className="w-2 h-2 rounded-full bg-emerald-400 shrink-0" />
+             <div className={`w-2 h-2 rounded-full shrink-0 ${isStaff ? "bg-amber-400" : "bg-emerald-400"}`} />
              <div className="text-[11.5px] text-white/80 font-medium leading-tight">
-               Gudang Narogong<br /><span className="text-white/50 text-[10.5px] font-normal">v1.0 · Sistem Internal</span>
+               Gudang Narogong<br /><span className="text-white/50 text-[10.5px] font-normal">{isStaff ? "Staff Gudang · Akses Terbatas" : "v1.0 · Administrator"}</span>
              </div>
           </div>
         </div>
@@ -91,17 +93,17 @@ export default function AppLayout({ user, onLogout, children }) {
             <Search size={14} className="absolute left-2.5 top-1/2 -translate-y-1/2 text-slate-400" />
             <input
               data-testid="global-search"
-              placeholder="Cari transaksi, barang, pelanggan…"
+              placeholder={isStaff ? "Cari barang, stok…" : "Cari transaksi, barang, pelanggan…"}
               className="w-full h-[30px] pl-8 pr-3 text-[12px] bg-[#F0F3F8] border border-[#D6DCE5] rounded-[4px] outline-none focus:border-[#2563EB] focus:ring-1 focus:ring-blue-200"
             />
           </div>
           <div className="flex items-center gap-2.5 pl-3 border-l border-[#D6DCE5]">
             <div className="w-7 h-7 rounded-[4px] bg-gradient-to-br from-[#2563EB] to-[#1B2A4A] text-white text-[11px] font-semibold flex items-center justify-center">
-              {user.nama.slice(0, 2).toUpperCase()}
+              {(user?.nama || user?.name || "U").slice(0, 2).toUpperCase()}
             </div>
             <div className="leading-tight hidden sm:block">
-              <div className="text-[12px] font-semibold text-[#1B2A4A]">{user.nama}</div>
-              <div className="text-[10px] text-slate-400">{user.role}</div>
+              <div className="text-[12px] font-semibold text-[#1B2A4A]">{user?.nama || user?.name || "User"}</div>
+              <div className="text-[10px] text-slate-400">{user?.role}</div>
             </div>
             <button
               data-testid="logout-btn"

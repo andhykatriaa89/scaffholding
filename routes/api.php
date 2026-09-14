@@ -26,19 +26,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/auth/logout', [AuthController::class, 'logout']);
     Route::get('/auth/me', [AuthController::class, 'me']);
 
-    // Dashboard
-    Route::get('/dashboard/summary', [DashboardController::class, 'summary']);
-    Route::get('/dashboard/grafik-bulanan', [DashboardController::class, 'grafikBulanan']);
-    Route::get('/dashboard/aktivitas-terbaru', [DashboardController::class, 'aktivitasTerbaru']);
-
-    // Pelanggan
-    Route::get('/pelanggan', [PelangganController::class, 'index']);
-    Route::post('/pelanggan', [PelangganController::class, 'store']);
-    Route::get('/pelanggan/{id}', [PelangganController::class, 'show']);
-    Route::put('/pelanggan/{id}', [PelangganController::class, 'update']);
-    Route::delete('/pelanggan/{id}', [PelangganController::class, 'destroy']);
-
-    // Barang
+    // Barang & Stok (Admin & Staff Gudang)
     Route::get('/barang', [BarangController::class, 'index']);
     Route::post('/barang', [BarangController::class, 'store']);
     Route::get('/barang/stok-menipis', [BarangController::class, 'stokMenipis']);
@@ -46,24 +34,41 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::put('/barang/{id}', [BarangController::class, 'update']);
     Route::delete('/barang/{id}', [BarangController::class, 'destroy']);
 
-    // Penyewaan
-    Route::get('/penyewaan', [PenyewaanController::class, 'index']);
-    Route::get('/penyewaan/aktif', [PenyewaanController::class, 'aktif']);
-    Route::get('/penyewaan/jatuh-tempo', [PenyewaanController::class, 'jatuhTempo']);
-    Route::post('/penyewaan', [PenyewaanController::class, 'store']);
-    Route::get('/penyewaan/{id}', [PenyewaanController::class, 'show']);
-
-    // Penjualan
-    Route::get('/penjualan', [PenjualanController::class, 'index']);
-    Route::post('/penjualan', [PenjualanController::class, 'store']);
-    Route::get('/penjualan/{id}', [PenjualanController::class, 'show']);
-
-    // Pengembalian
+    // Pengembalian Sewa (Admin & Staff Gudang)
     Route::post('/pengembalian', [PengembalianController::class, 'store']);
     Route::get('/pengembalian/{id}', [PengembalianController::class, 'show']);
 
-    // Laporan
-    Route::get('/laporan/penjualan', [LaporanController::class, 'penjualan']);
-    Route::get('/laporan/penyewaan', [LaporanController::class, 'penyewaan']);
-    Route::get('/laporan/stok', [LaporanController::class, 'stok']);
+    // Kontrak sewa aktif untuk proses pengembalian (Admin & Staff Gudang)
+    Route::get('/penyewaan/aktif', [PenyewaanController::class, 'aktif']);
+
+    // Route khusus Admin (Staff tidak memiliki akses)
+    Route::middleware('role:Admin')->group(function () {
+        // Dashboard
+        Route::get('/dashboard/summary', [DashboardController::class, 'summary']);
+        Route::get('/dashboard/grafik-bulanan', [DashboardController::class, 'grafikBulanan']);
+        Route::get('/dashboard/aktivitas-terbaru', [DashboardController::class, 'aktivitasTerbaru']);
+
+        // Pelanggan
+        Route::get('/pelanggan', [PelangganController::class, 'index']);
+        Route::post('/pelanggan', [PelangganController::class, 'store']);
+        Route::get('/pelanggan/{id}', [PelangganController::class, 'show']);
+        Route::put('/pelanggan/{id}', [PelangganController::class, 'update']);
+        Route::delete('/pelanggan/{id}', [PelangganController::class, 'destroy']);
+
+        // Transaksi Penyewaan
+        Route::get('/penyewaan', [PenyewaanController::class, 'index']);
+        Route::get('/penyewaan/jatuh-tempo', [PenyewaanController::class, 'jatuhTempo']);
+        Route::post('/penyewaan', [PenyewaanController::class, 'store']);
+        Route::get('/penyewaan/{id}', [PenyewaanController::class, 'show']);
+
+        // Transaksi Penjualan
+        Route::get('/penjualan', [PenjualanController::class, 'index']);
+        Route::post('/penjualan', [PenjualanController::class, 'store']);
+        Route::get('/penjualan/{id}', [PenjualanController::class, 'show']);
+
+        // Laporan
+        Route::get('/laporan/penjualan', [LaporanController::class, 'penjualan']);
+        Route::get('/laporan/penyewaan', [LaporanController::class, 'penyewaan']);
+        Route::get('/laporan/stok', [LaporanController::class, 'stok']);
+    });
 });

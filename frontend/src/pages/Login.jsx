@@ -22,7 +22,8 @@ export default function Login({ onLogin }) {
         password: p,
       });
       onLogin(res.data.user);
-      navigate("/dashboard");
+      const isStaffUser = res.data.user?.role === "Staff Gudang" || Boolean(res.data.user?.role && res.data.user.role.toLowerCase().includes("staff"));
+      navigate(isStaffUser ? "/barang" : "/dashboard");
     } catch (error) {
       if (error.response && (error.response.status === 401 || error.response.status === 422)) {
         const msg = error.response.data?.errors?.username?.[0] || error.response.data?.message || "Username atau password salah.";

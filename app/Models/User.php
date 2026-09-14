@@ -35,4 +35,14 @@ class User extends Authenticatable
     {
         return $this->hasMany(Aktivitas::class);
     }
+
+    public function isAdmin(): bool
+    {
+        return $this->role === 'Admin';
+    }
+
+    public function isStaff(): bool
+    {
+        return $this->role === 'Staff Gudang';
+    }
 }

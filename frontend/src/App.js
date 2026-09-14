@@ -33,27 +33,33 @@ function App() {
     setUser(null);
   };
 
-  const guard = (page) =>
-    user ? (
-      <AppLayout user={user} onLogout={logout}>{page}</AppLayout>
-    ) : (
-      <Navigate to="/login" replace />
-    );
+  const isStaff = user?.role === "Staff Gudang" || Boolean(user?.role && user.role.toLowerCase().includes("staff"));
+  const defaultPath = isStaff ? "/barang" : "/dashboard";
+
+  const guard = (page, allowedRoles = null) => {
+    if (!user) {
+      return <Navigate to="/login" replace />;
+    }
+    if (allowedRoles && !allowedRoles.includes(user.role)) {
+      return <Navigate to={defaultPath} replace />;
+    }
+    return <AppLayout user={user} onLogout={logout}>{page}</AppLayout>;
+  };
 
   return (
     <div className="App">
       <Toaster position="top-right" richColors toastOptions={{ style: { borderRadius: "5px", fontSize: "13px" } }} />
       <BrowserRouter>
         <Routes>
-          <Route path="/login" element={user ? <Navigate to="/dashboard" replace /> : <Login onLogin={login} />} />
-          <Route path="/dashboard" element={guard(<Dashboard />)} />
-          <Route path="/pelanggan" element={guard(<Pelanggan />)} />
+          <Route path="/login" element={user ? <Navigate to={defaultPath} replace /> : <Login onLogin={login} />} />
+          <Route path="/dashboard" element={guard(<Dashboard />, ["Admin"])} />
+          <Route path="/pelanggan" element={guard(<Pelanggan />, ["Admin"])} />
           <Route path="/barang" element={guard(<Barang />)} />
-          <Route path="/penjualan" element={guard(<Penjualan />)} />
-          <Route path="/penyewaan" element={guard(<Penyewaan />)} />
+          <Route path="/penjualan" element={guard(<Penjualan />, ["Admin"])} />
+          <Route path="/penyewaan" element={guard(<Penyewaan />, ["Admin"])} />
           <Route path="/pengembalian" element={guard(<Pengembalian />)} />
-          <Route path="/laporan" element={guard(<Laporan />)} />
-          <Route path="*" element={<Navigate to={user ? "/dashboard" : "/login"} replace />} />
+          <Route path="/laporan" element={guard(<Laporan />, ["Admin"])} />
+          <Route path="*" element={<Navigate to={user ? defaultPath : "/login"} replace />} />
         </Routes>
       </BrowserRouter>
     </div>
